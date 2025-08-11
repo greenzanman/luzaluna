@@ -1,13 +1,9 @@
 import kaplay from "kaplay";
-import type { Comp, Vec2 } from "kaplay";
 import "kaplay/global"; 
-
-import {createPlayer} from "./game_objects/player"
-import {createFlower} from "./game_objects/flower"
-import {createPollen} from "./game_objects/pollen"
 
 import {mountGameScene} from "./scenes/game"
 import {mountLossScene} from "./scenes/loss"
+import {mountMenuScene} from "./scenes/menu";
 
 export const SCREEN_WIDTH = 640
 export const SCREEN_HEIGHT = 480
@@ -29,6 +25,9 @@ export const HEALTH_CAPACITY = 4
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
 
+// TODO: Add scoreboard
+// TODO: Add arrow cursor to aim
+
 
 const game: HTMLElement = document.getElementById("game");
 kaplay({
@@ -40,8 +39,8 @@ kaplay({
 
 loadRoot("./"); // A good idea for Itch.io publishing later
 
-
+mountMenuScene();
 mountGameScene();
 mountLossScene();
 
-go("game");
+go("menu");

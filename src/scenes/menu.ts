@@ -1,18 +1,19 @@
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
 
-export function mountLossScene() {
+export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("loss", (time, bumps) => {
+    scene("menu", () => {
         add([
-            text("YOU LOST:" + "\nTime:" + time + "\nBumps:" + bumps),
+            text("TUMBLEBEE"),
             pos(textPos),
-            scale(1.5),
+            scale(2),
             anchor("center"),
+            color(BLACK)
         ]);
 
-        const retryBtn = add([
-            rect(300, 50, {fill: false}),
+        const startBtn = add([
+            rect(300, 50),
             pos(textPos.add(vec2(0, 150))),
             area(),
             anchor("center"),
@@ -20,13 +21,13 @@ export function mountLossScene() {
             color(BLACK)
         ])
 
-        retryBtn.add([
-            text("Retry"),
+        startBtn.add([
+            text("START"),
             pos(0),
             anchor("center"),
             color(WHITE)
         ])
 
-        retryBtn.onClick(() => go("game"));
+        startBtn.onClick(() => go("game"));
     })
 }

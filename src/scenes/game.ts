@@ -26,6 +26,8 @@ import {createPollenCount} from "../game_objects/pollenCount"
 
 import {createCustomTimer} from "../game_objects/timer"
 
+import {createBumpCount} from "../game_objects/bumpCount"
+
 export function mountGameScene() {
     scene("game", () => {
         // Create player
@@ -52,10 +54,13 @@ export function mountGameScene() {
         createBorder(vec2(PADDING_HORIZ, PADDING_VERT), SCREEN_WIDTH - PADDING_HORIZ * 2, SCREEN_HEIGHT - PADDING_VERT * 2, BORDER_THICKNESS)
 
         // Create timer
-        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", 0);
+        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
 
         // Create pollen count
         const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70, "Pollens: 2")
+
+        // Creat bump count
+        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 225, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
 
         // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
@@ -72,19 +77,26 @@ export function mountGameScene() {
             pollenCount.increasePollens();
         })
 
+        // Bump event listener
         on("bump", "*", () => {
             pollenCount.increasePollens();
+            bumpCount.increaseBumps();
         })
+
+        function leaveGameScene(): void {
+            get("*").forEach((obj) => destroy(obj))
+            go("loss", customTimer.getTime(), bumpCount.getBumps());
+        }
 
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
+
             player.setHP(player.hp() - 1)
-            debug.log("HP", player.hp())
             if(player.hp() <= 0) {
-                debug.log("Stuff")
-                go("loss", customTimer.getTime());
+                leaveGameScene();
+                //go("loss", customTimer.getTime(), bumpCount.getBumps());
                 //player.trigger("death")
             }
         })
@@ -105,6 +117,7 @@ export function mountGameScene() {
                 let dir = mousePos().sub(player.worldPos()).unit()
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))
+
                 pollenCount.decreasePollens();
             }
     
@@ -112,9 +125,11 @@ export function mountGameScene() {
             if (player.worldPos().x < 0 || player.worldPos().x > SCREEN_WIDTH ||
                 player.worldPos().y < 0 || player.worldPos().y > SCREEN_HEIGHT)
             {
-                go("loss", customTimer.getTime());
+                leaveGameScene();
+                //go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
             //debug.log("Pollens:", player.curr_pollens);
         });
     });
 }
+
