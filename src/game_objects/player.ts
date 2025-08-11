@@ -1,22 +1,26 @@
 import type { Comp, Vec2 } from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY} from "../main"
 
 
 // Player Object
 
 export interface PlayerComp extends Comp {
     playerState: number;
+    curr_pollens: number;
     velocity: Vec2;
     bumpX: (cause: Vec2, coef: number) => void;
     bumpY: (cause: Vec2, coef: number) => void;
     push: (dir: Vec2) => void;
+    increasePollens: () => void;
+    decreasePollens: () => void;
 }
 
-function playerComp(velocity: Vec2): PlayerComp {
+function playerComp(velocity: Vec2, pollens: number): PlayerComp {
     return {
         id: "playerComp",
         playerState: 0,
         velocity: velocity,
+        curr_pollens: pollens,
         update() {
             this.velocity.y += GRAVITY * dt();
             this.move(this.velocity.x * dt(), this.velocity.y * dt());
@@ -34,13 +38,21 @@ function playerComp(velocity: Vec2): PlayerComp {
         push(dir: Vec2)
         {
             this.velocity = this.velocity.add(dir);
+        },
+        increasePollens()
+        {
+            this.curr_pollens != POLLEN_CAPACITY ? this.curr_pollens++ : this.curr_pollens;
+        },
+        decreasePollens()
+        {
+            this.curr_pollens--;
         }
-    };
+    }
 }
 
 export function createPlayer(x: number, y: number) {
     return add([
-        playerComp(vec2(0, -5000)),
+        playerComp(vec2(0, -5000), POLLEN_CAPACITY),
         area(),
         rect(30, 30),
         anchor("center"),

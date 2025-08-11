@@ -14,6 +14,8 @@ export const SCREEN_HEIGHT = 480
 
 export const PADDING_VERT = 30
 export const PADDING_HORIZ = 20
+export const BORDER_THICKNESS = 16
+
 export const FLOWER_SPACING = 30
 export const GRAVITY = 15000
 export const BUMP_SPEED = 20000
