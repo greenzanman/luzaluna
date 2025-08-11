@@ -26,10 +26,12 @@ function flowerComp(flowerType: number): FlowerComp {
         },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
+            this.area.scale = this.flowerState > 0 ? 2 : 1;
         },
-        draw() {
+        draw() {0
             if (this.flowerState > 0) {
                 drawCircle({pos: vec2(0, 0), radius: Math.min(20, this.flowerState * 10)})
+                //this.scale = this.flowerState > 0 ? 2 : 1;
             }
         }
     };

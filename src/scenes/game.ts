@@ -22,6 +22,8 @@ import {createBorder} from "../game_objects/border"
 import {createHeart} from "../game_objects/heart"
 import {createHealthBar} from "../game_objects/healthBar"
 
+import {createPollenCount} from "../game_objects/pollenCount"
+
 export function mountGameScene() {
     scene("game", () => {
         // Create player
@@ -54,14 +56,16 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
         }
 
+        // Create pollen count
+        const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 300, HEART_SPACING / 2 + PADDING_VERT - 85, "Pollens: 2")
+
         // Regening pollen function
         loop(POLLEN_RECHARGE_RATE, () => {
-            player.increasePollens();
+            pollenCount.increasePollens();
         })
 
         on("bump", "*", () => {
-            player.heal(1);
-            player.increasePollens()
+            pollenCount.increasePollens();
         })
 
         // Decreases health when player gets hurt.
@@ -69,26 +73,31 @@ export function mountGameScene() {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
             player.setHP(player.hp() - 1)
+            debug.log("HP", player.hp())
             if(player.hp() <= 0) {
-                player.trigger("death")
+                debug.log("Stuff")
+                go("loss");
+                //player.trigger("death")
             }
         })
 
         // Goes to loss scene when player dies.
+        /*
         player.onDeath(() => {
             debug.log("Death")
             go("loss");
         })
+        */
     
         // Tick function
         onUpdate(() => {
             // Shooting pollen
-            if (isMousePressed() && player.curr_pollens)
+            if (isMousePressed() && pollenCount.getPollens())
             {
                 let dir = mousePos().sub(player.worldPos()).unit()
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))
-                player.decreasePollens();
+                pollenCount.decreasePollens();
             }
     
             // Loss condition
