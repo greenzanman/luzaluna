@@ -16,7 +16,7 @@ export const FLOWER_SPACING = 25
 export const GRAVITY = 15000
 export const BUMP_SPEED = 20000
 export const POLLEN_SPEED = 30000
-export const POLLEN_PUSH = 500
+export const POLLEN_PUSH = 500 * 10
 
 export const POLLEN_CAPACITY = 2
 export const POLLEN_RECHARGE_RATE = 3
@@ -28,8 +28,9 @@ export const HEART_BORDER_THICKNESS = 4
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
 // TODO: Add current players velocity on top of pollen velocity?
-// TODO: Add i-frames
+// TODO: Add i-frames (fixes double collision bug)
 // TODO: Fix double bump count?
+// TODO: Fix issue where shots not registering when clicking off of the game screen.
 
 
 const game: HTMLElement = document.getElementById("game");
