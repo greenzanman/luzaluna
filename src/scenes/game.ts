@@ -83,20 +83,13 @@ export function mountGameScene() {
             bumpCount.increaseBumps();
         })
 
-        function leaveGameScene(): void {
-            get("*").forEach((obj) => destroy(obj))
-            go("loss", customTimer.getTime(), bumpCount.getBumps());
-        }
-
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
 
-            player.setHP(player.hp() - 1)
             if(player.hp() <= 0) {
-                leaveGameScene();
-                //go("loss", customTimer.getTime(), bumpCount.getBumps());
+                go("loss", customTimer.getTime(), bumpCount.getBumps());
                 //player.trigger("death")
             }
         })
@@ -125,8 +118,7 @@ export function mountGameScene() {
             if (player.worldPos().x < 0 || player.worldPos().x > SCREEN_WIDTH ||
                 player.worldPos().y < 0 || player.worldPos().y > SCREEN_HEIGHT)
             {
-                leaveGameScene();
-                //go("loss", customTimer.getTime(), bumpCount.getBumps());
+                go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
             //debug.log("Pollens:", player.curr_pollens);
         });

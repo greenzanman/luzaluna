@@ -27,6 +27,9 @@ export const HEART_BORDER_THICKNESS = 4
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
+// TODO: Add current players velocity on top of pollen velocity?
+// TODO: Add i-frames
+// TODO: Fix double bump count?
 
 
 const game: HTMLElement = document.getElementById("game");
