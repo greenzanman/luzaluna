@@ -24,6 +24,8 @@ import {createHealthBar} from "../game_objects/healthBar"
 
 import {createPollenCount} from "../game_objects/pollenCount"
 
+import {createCustomTimer} from "../game_objects/timer"
+
 export function mountGameScene() {
     scene("game", () => {
         // Create player
@@ -49,6 +51,13 @@ export function mountGameScene() {
         // Create border
         createBorder(vec2(PADDING_HORIZ, PADDING_VERT), SCREEN_WIDTH - PADDING_HORIZ * 2, SCREEN_HEIGHT - PADDING_VERT * 2, BORDER_THICKNESS)
 
+        // Create timer
+        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", 0);
+
+        // Create pollen count
+        const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70, "Pollens: 2")
+
+        // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
 0
         // Create hearts
@@ -56,8 +65,7 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
         }
 
-        // Create pollen count
-        const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 300, HEART_SPACING / 2 + PADDING_VERT - 85, "Pollens: 2")
+        
 
         // Regening pollen function
         loop(POLLEN_RECHARGE_RATE, () => {
@@ -76,7 +84,7 @@ export function mountGameScene() {
             debug.log("HP", player.hp())
             if(player.hp() <= 0) {
                 debug.log("Stuff")
-                go("loss");
+                go("loss", customTimer.getTime());
                 //player.trigger("death")
             }
         })
@@ -104,7 +112,7 @@ export function mountGameScene() {
             if (player.worldPos().x < 0 || player.worldPos().x > SCREEN_WIDTH ||
                 player.worldPos().y < 0 || player.worldPos().y > SCREEN_HEIGHT)
             {
-                go("loss");
+                go("loss", customTimer.getTime());
             }
             //debug.log("Pollens:", player.curr_pollens);
         });

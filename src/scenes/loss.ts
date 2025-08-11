@@ -3,11 +3,11 @@ import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN
 export function mountLossScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("loss", () => {
+    scene("loss", (time) => {
         add([
-            text("YOU LOST"),
+            text("YOU LOST:" + time),
             pos(textPos),
-            scale(3),
+            scale(1.5),
             anchor("center"),
         ]);
         onClick(() => go("game"));

@@ -37,6 +37,7 @@ export function createPollenCount(xPos: number, yPos: number, txt: string): Game
         pos(xPos, yPos),
         text(txt),
         color(BLACK),
+        scale(.5),
         pollenCountComp(POLLEN_CAPACITY),
         "pollenCount"
     ]);
