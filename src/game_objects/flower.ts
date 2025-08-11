@@ -54,21 +54,24 @@ export function createFlower(x: number, y: number, flowerType: number, player: G
         {
             // Dispatch bump event in order to regen pollen.
             flower.trigger("bump");
-            switch (flowerType)
-            {
-                case 0:
-                    player.bumpY(flower.worldPos(), 1);
-                    break;
-                case 1:
-                    player.bumpX(flower.worldPos(), -1);
-                    break;
-                case 2:
-                    player.bumpY(flower.worldPos(), -1);
-                    break;
-                case 3:
-                    player.bumpX(flower.worldPos(), 1);
-                    break;
-            }
+        } else {
+            player.hurt(1);
+        }
+
+        switch (flowerType)
+        {
+            case 0:
+                player.bumpY(flower.worldPos(), 1);
+                break;
+            case 1:
+                player.bumpX(flower.worldPos(), -1);
+                break;
+            case 2:
+                player.bumpY(flower.worldPos(), -1);
+                break;
+            case 3:
+                player.bumpX(flower.worldPos(), 1);
+                break;
         }
     })
 }
