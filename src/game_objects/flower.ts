@@ -47,9 +47,13 @@ export function createFlower(x: number, y: number, flowerType: number, player: G
     flower.onCollide("pollen", () => {
         flower.setFlowerState(5);
     });
+ 
+    
     flower.onCollide("player", () => {
         if (flower.getFlowerState() > 0)
         {
+            // Dispatch bump event in order to regen pollen.
+            flower.trigger("bump");
             switch (flowerType)
             {
                 case 0:

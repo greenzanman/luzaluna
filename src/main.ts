@@ -17,6 +17,9 @@ export const BUMP_SPEED = 20000
 export const POLLEN_SPEED = 30000
 export const POLLEN_PUSH = 500
 
+export const POLLEN_CAPACITY = 2
+export const POLLEN_RECHARGE_RATE = 3;
+
 kaplay({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
