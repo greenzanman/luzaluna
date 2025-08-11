@@ -11,7 +11,10 @@ import {mountLossScene} from "./scenes/loss"
 
 export const SCREEN_WIDTH = 640
 export const SCREEN_HEIGHT = 480
-export const FLOWER_SPACING = 40
+
+export const PADDING_VERT = 30
+export const PADDING_HORIZ = 20
+export const FLOWER_SPACING = 30
 export const GRAVITY = 15000
 export const BUMP_SPEED = 20000
 export const POLLEN_SPEED = 30000
@@ -20,10 +23,13 @@ export const POLLEN_PUSH = 500
 export const POLLEN_CAPACITY = 2
 export const POLLEN_RECHARGE_RATE = 3;
 
+
+const game: HTMLElement = document.getElementById("game");
 kaplay({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    debugKey: "0"
+    debugKey: "0",
+    root: game
 });
 
 loadRoot("./"); // A good idea for Itch.io publishing later

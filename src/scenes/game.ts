@@ -1,4 +1,16 @@
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH, POLLEN_CAPACITY, POLLEN_RECHARGE_RATE} from "../main"
+import {
+    SCREEN_WIDTH, 
+    SCREEN_HEIGHT, 
+    FLOWER_SPACING, 
+    GRAVITY, 
+    BUMP_SPEED,
+    POLLEN_SPEED, 
+    POLLEN_PUSH, 
+    POLLEN_CAPACITY, 
+    POLLEN_RECHARGE_RATE,
+    PADDING_VERT,
+    PADDING_HORIZ
+} from "../main"
 import {createPlayer} from "../game_objects/player"
 import {createFlower} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
@@ -8,14 +20,20 @@ export function mountGameScene() {
         let current_pollens = POLLEN_CAPACITY;
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     
-        for (let i = 0; i < SCREEN_WIDTH; i += FLOWER_SPACING) {
-            createFlower(FLOWER_SPACING / 2 + i, FLOWER_SPACING / 2, 3, player)
-            createFlower(FLOWER_SPACING / 2 + i, SCREEN_HEIGHT - FLOWER_SPACING / 2, 1, player)
+        for (let i = PADDING_HORIZ; i < SCREEN_WIDTH - PADDING_HORIZ; i += FLOWER_SPACING) {
+            // Bottom flowers
+            createFlower(FLOWER_SPACING / 2 + i, FLOWER_SPACING / 2 + PADDING_VERT, 3, player)
+
+            // Top flowers
+            createFlower(FLOWER_SPACING / 2 + i, SCREEN_HEIGHT - FLOWER_SPACING / 2 - PADDING_VERT, 1, player)
         }
     
-        for (let i = 0; i < SCREEN_HEIGHT; i += FLOWER_SPACING) {
-            createFlower(FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 0, player)
-            createFlower(SCREEN_WIDTH - FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 2, player)
+        for (let i = PADDING_VERT; i < SCREEN_HEIGHT - PADDING_VERT; i += FLOWER_SPACING) {
+            // Left flowers
+            createFlower(FLOWER_SPACING / 2 + PADDING_HORIZ, FLOWER_SPACING / 2 + i, 0, player)
+
+            // Right flowers
+            createFlower(SCREEN_WIDTH - FLOWER_SPACING / 2 - PADDING_HORIZ, FLOWER_SPACING / 2 + i, 2, player)
         }
 
         // Regening pollen function
