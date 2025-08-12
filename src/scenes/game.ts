@@ -48,11 +48,13 @@ export function mountGameScene() {
         const arrow = createArrow(player)
 
         // Generates array of pairs of neighboring points.
+        // TODO: Find way to set flower type
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         // For each segment interpolate the flowers along the segment.
+        const increment = 20
         segments.forEach(([start, end]) => {
-            Array.from({ length: 20 }).forEach((_, j) => {
+            Array.from({ length: increment }).forEach((_, j) => {
                 const position = vec2(lerp(start.x, end.x, j / 20),lerp(start.y, end.y, j / 20));
                 createFlower(position, 3, player, border);
             });
