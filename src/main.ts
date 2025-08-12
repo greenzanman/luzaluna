@@ -5,18 +5,16 @@ import {mountGameScene} from "./scenes/game"
 import {mountLossScene} from "./scenes/loss"
 import {mountMenuScene} from "./scenes/menu";
 
-export const SCREEN_WIDTH = 640
-export const SCREEN_HEIGHT = 480
+export const SCREEN_WIDTH = 960
+export const SCREEN_HEIGHT = 640
 
 export const PADDING_VERT = 60
-export const PADDING_HORIZ = 20
+export const PADDING_HORIZ = 60
 export const BORDER_THICKNESS = 16
-
-export const HEXAGON_SIDE = 40
 
 export const FLOWER_SPACING = 25
 export const GRAVITY = 15000
-export const BUMP_SPEED = 20000
+export const BUMP_SPEED = 30000
 export const POLLEN_SPEED = 30000
 export const POLLEN_PUSH = 500 * 1
 

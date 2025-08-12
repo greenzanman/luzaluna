@@ -109,17 +109,23 @@ export function createFlower(position: Vec2, flowerType: number, player: GameObj
 
         switch (flowerType)
         {
-            case 0:
-                player.bumpY(flower.worldPos(), 1);
+            case 0: // Bottom left 
+                player.bump(flower.worldPos(), 1);
                 break;
-            case 1:
-                player.bumpX(flower.worldPos(), -1);
+            case 1: // Bottom
+                player.bump(flower.worldPos(), 1);
                 break;
-            case 2:
-                player.bumpY(flower.worldPos(), -1);
+            case 2: // Bottom right
+                player.bump(flower.worldPos(), 1);
                 break;
-            case 3:
-                player.bumpX(flower.worldPos(), 1);
+            case 3: // Top right
+                player.bump(flower.worldPos(), 1);
+                break;
+            case 4: // Top 
+                player.bump(flower.worldPos(), 1);
+                break;
+            case 5: // Top left
+                player.bump(flower.worldPos(), 1);
                 break;
         }
     })

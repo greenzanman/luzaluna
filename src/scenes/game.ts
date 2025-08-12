@@ -18,7 +18,7 @@ import {createPlayer} from "../game_objects/player"
 import {createFlower} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createBorder} from "../game_objects/border"
-import { createHex } from "../game_objects/hexagon"
+import {createHexBorder} from "../game_objects/hexBorder"
 
 import {createHeart} from "../game_objects/heart"
 import {createHealthBar} from "../game_objects/healthBar"
@@ -38,11 +38,11 @@ export function mountGameScene() {
         const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
         const rect = canvas.getBoundingClientRect();
-        const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
-        const hex = createHex(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+        //const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+        const hex = createHexBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
 
         // Create player
-        const player = createPlayer(borderWidth / 2, borderHeight / 2, border);
+        const player = createPlayer(borderWidth / 2, borderHeight / 2, hex);
 
         // Create arrow
         const arrow = createArrow(player)
@@ -52,51 +52,32 @@ export function mountGameScene() {
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         // For each segment interpolate the flowers along the segment.
-        const increment = 20
-        segments.forEach(([start, end]) => {
+        const increment = 10
+        segments.forEach(([start, end], i) => {
+            const flowerType = i
             Array.from({ length: increment }).forEach((_, j) => {
-                const position = vec2(lerp(start.x, end.x, j / 20),lerp(start.y, end.y, j / 20));
-                createFlower(position, 3, player, border);
+                const position = vec2(lerp(start.x, end.x, j / increment),lerp(start.y, end.y, j / increment));
+                createFlower(position, flowerType, player, hex);
             });
         });
 
-        
-        /*
-        // Create flowers
-        for (let i = 0; i < borderWidth - BORDER_THICKNESS; i += FLOWER_SPACING) {
-            // Top flowers
-            createFlower(FLOWER_SPACING / 2 + i, FLOWER_SPACING / 2, 3, player, border)
-
-            // Bottom flowers
-            createFlower(FLOWER_SPACING / 2 + i, borderHeight - FLOWER_SPACING / 2, 1, player, border)
-        }
-    
-        for (let i = 0; i < borderHeight - BORDER_THICKNESS; i += FLOWER_SPACING) {
-            // Left flowers
-            createFlower(FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 0, player, border)
-
-            // Right flowers
-            createFlower(borderWidth - FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 2, player, border)
-        }
-        */
-
         // Create health bar
-        const healthBar = createHealthBar(-BORDER_THICKNESS / 2, -BORDER_THICKNESS / 2, 40, border)
+        const healthBar = createHealthBar(-BORDER_THICKNESS / 2, -BORDER_THICKNESS / 2, 40, hex)
 0
         // Create hearts
         let i = 0
-        for (let j = 0; i < SCREEN_WIDTH - PADDING_HORIZ && j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
+        for (let j = 0; i < SCREEN_WIDTH - PADDING_HORIZ || j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
             createHeart(10 + i, -10, 4, BLACK, healthBar)
         }
 
         // Create timer
-        const customTimer = createCustomTimer(10 + i, -30, "Time: 0", time(), border);
+        const customTimer = createCustomTimer(10 + i, -30, "Time: 0", time(), hex);
 
         // Create pollen count
-        const pollenCount = createPollenCount(150 + i,-30, "Pollens: 2", border)
+        const pollenCount = createPollenCount(150 + i,-30, "Pollens: 2", hex)
 
         // Creat bump count
-        const bumpCount = createBumpCount(300 + i, -30, "Bumps: 0", border)
+        const bumpCount = createBumpCount(300 + i, -30, "Bumps: 0", hex)
 
         
 

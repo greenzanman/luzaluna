@@ -7,8 +7,7 @@ import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN
 export interface PlayerComp extends Comp {
     playerState: number;
     velocity: Vec2;
-    bumpX: (cause: Vec2, coef: number) => void;
-    bumpY: (cause: Vec2, coef: number) => void;
+    bump: (cause: Vec2, coef: number, biasX: number, biasY: number) => void;
     push: (dir: Vec2) => void;
 }
 
@@ -22,15 +21,10 @@ function playerComp(velocity: Vec2): PlayerComp {
             this.velocity.y += GRAVITY * dt();
             this.move(this.velocity.x * dt(), this.velocity.y * dt());
         },
-        bumpX(cause: Vec2, coef: number) {
-            let offset = this.worldPos().add(cause.scale(-1)).unit();
-            this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
-            this.velocity.y =  BUMP_SPEED * coef;
-        },
-        bumpY(cause: Vec2, coef: number) {
-            let offset = this.worldPos().add(cause.scale(-1)).unit();
-            this.velocity = this.velocity.add(0, offset.y * BUMP_SPEED)
-            this.velocity.x = BUMP_SPEED * coef
+        bump(cause: Vec2, coef: number, biasX: number, biasY: number) {
+            let bumpDir = this.worldPos().add(cause.scale(-1)).unit();
+            this.velocity = bumpDir.scale(BUMP_SPEED * coef);
+            this.velocity = this.velocity.add(vec2(biasX, biasY));
         },
         push(dir: Vec2)
         {

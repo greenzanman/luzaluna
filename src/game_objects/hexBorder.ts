@@ -1,17 +1,17 @@
 import type { Comp, Vec2, GameObj} from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH, HEXAGON_SIDE} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
 import {PlayerComp} from "./player"
 
-interface BorderComp extends Comp {}
+interface HexBorderComp extends Comp {}
 
-function borderComp(): BorderComp {
+function hexBorderComp(): HexBorderComp {
     return {
         id: "borderComp",
         require: ["pos", "polygon", "outline", "color"],
     };
 }
 
-export function createHex(position: Vec2, width: number, height:number, out:number): GameObj {
+export function createHexBorder(position: Vec2, width: number, height:number, out:number): GameObj {
     /** 
      * ***
      * ***
@@ -19,7 +19,7 @@ export function createHex(position: Vec2, width: number, height:number, out:numb
     const myWidth = width / 3
     const myHeight = height / 2
     return add([
-    borderComp(),
+    hexBorderComp(),
     pos(position),
     polygon([
         vec2(0, myHeight), 
