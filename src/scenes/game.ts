@@ -33,13 +33,13 @@ import {createArrow} from "../game_objects/arrow"
 
 export function mountGameScene() {
     scene("game", () => {
-
+        const rect = canvas.getBoundingClientRect();
         // Create border
         const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
-        const rect = canvas.getBoundingClientRect();
+        const borderPos = vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2)
         //const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
-        const hex = createHexBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+        const hex = createHexBorder(borderPos, borderWidth, borderHeight, BORDER_THICKNESS)
 
         // Create player
         const player = createPlayer(borderWidth / 2, borderHeight / 2, hex);
@@ -52,11 +52,10 @@ export function mountGameScene() {
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         // For each segment interpolate the flowers along the segment.
-        const increment = 10
         segments.forEach(([start, end], i) => {
             const flowerType = i
-            Array.from({ length: increment }).forEach((_, j) => {
-                const position = vec2(lerp(start.x, end.x, j / increment),lerp(start.y, end.y, j / increment));
+            Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
+                const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
                 createFlower(position, flowerType, player, hex);
             });
         });
@@ -130,10 +129,10 @@ export function mountGameScene() {
     
             // Loss condition
             const playerPos = player.worldPos()
-            if ( playerPos.x < rect.right / 2 - borderWidth / 2 || // Left Bound
-                playerPos.x  > rect.right / 2 + borderWidth / 2  || // Right Bound
-                playerPos.y > rect.bottom / 2 + borderHeight / 2  ||  // Bottom Bound
-                playerPos.y < rect.bottom / 2 - borderHeight / 2) // Top Bound
+            if ( playerPos.x < borderPos.x || // Left Bound
+                playerPos.x  > borderPos.x + borderWidth  || // Right Bound
+                playerPos.y > borderPos.y + borderHeight  ||  // Bottom Bound
+                playerPos.y < borderPos.y) // Top Bound
             {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
