@@ -24,11 +24,12 @@ export const POLLEN_RECHARGE_RATE = 3
 export const HEALTH_CAPACITY = 4
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
+export const INVINC_DURATION = 2
 
 // TODO: Add scoreboard
 // TODO: Add current players velocity on top of pollen velocity?
 // TODO: Add bar on top of player to show pollen count instead of a simple counter.
-// TODO: Add i-frames (fixes double collision bug)
+// TODO: Fix health bug
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
 

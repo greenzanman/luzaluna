@@ -12,7 +12,8 @@ import {
     PADDING_HORIZ,
     BORDER_THICKNESS,
     HEART_SPACING,
-    HEALTH_CAPACITY
+    HEALTH_CAPACITY,
+    INVINC_DURATION
 } from "../main"
 import {createPlayer} from "../game_objects/player"
 import {createFlower} from "../game_objects/flower"
@@ -93,9 +94,15 @@ export function mountGameScene() {
 
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
+            // Updates heart UI
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
 
+            // Makes player invincible and starts timer to make them vulnerable again.
+            player.setPlayerState(1);
+            player.wait(INVINC_DURATION, () => {player.setPlayerState(0)});
+
+            // Checks death condition.
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
                 //player.trigger("death")
@@ -117,6 +124,7 @@ export function mountGameScene() {
     
         // Tick function
         onUpdate(() => {
+            debug.log(player.getPlayerState())
             // Shooting pollen
             if (isMouseDown() && pollenCount.getPollens())
             {

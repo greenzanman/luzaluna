@@ -5,10 +5,12 @@ import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN
 // Player Object
 
 export interface PlayerComp extends Comp {
-    playerState: number;
+    playerState: number; // 0 - Vulnerable, 1 - Invincible
     velocity: Vec2;
     bump: (cause: Vec2, coef: number, biasX: number, biasY: number) => void;
     push: (dir: Vec2) => void;
+    setPlayerState: (state: number) => void;
+    getPlayerState: () => number;
 }
 
 function playerComp(velocity: Vec2): PlayerComp {
@@ -30,6 +32,14 @@ function playerComp(velocity: Vec2): PlayerComp {
         {
             this.velocity = this.velocity.add(dir);
         },
+        setPlayerState(state: number)
+        {
+            this.playerState = state;
+        },
+        getPlayerState()
+        {
+            return this.playerState;
+        }
     }
 }
 
@@ -39,6 +49,7 @@ export function createPlayer(x: number, y: number, border: GameObj): GameObj {
         health(HEALTH_CAPACITY),
         area(),
         rect(30, 30),
+        timer(),
         anchor("center"),
         pos(x, y),
         color(0.5, 0.5, 1),

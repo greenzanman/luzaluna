@@ -103,7 +103,7 @@ export function createFlower(position: Vec2, flowerType: number, player: GameObj
         {
             // Dispatch bump event in order to regen pollen.
             flower.trigger("bump");
-        } else {
+        } else if (player.getPlayerState() != 1) { // If player is not invincible.
             player.hurt(1);
         }
 
