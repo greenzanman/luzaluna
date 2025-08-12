@@ -16,19 +16,20 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
      * ***
      * ***
     */
-    const myWidth = width / 3
+    const x = width / (1 + Math.SQRT2)
     const myHeight = height / 2
+    const points2 = [
+        vec2(0, myHeight), 
+        vec2(x/Math.SQRT2, myHeight * 2), 
+        vec2(x/Math.SQRT2 + x, myHeight * 2), 
+        vec2(2 * x/Math.SQRT2 + x, myHeight), 
+        vec2(x/Math.SQRT2 + x, 0), 
+        vec2(x/Math.SQRT2, 0)
+    ]
     return add([
     hexBorderComp(),
     pos(position),
-    polygon([
-        vec2(0, myHeight), 
-        vec2(myWidth, myHeight * 2), 
-        vec2(myWidth * 2, myHeight * 2), 
-        vec2(myWidth * 3, myHeight), 
-        vec2(myWidth * 2, 0), 
-        vec2(myWidth, 0)
-    ], {fill: false}),
+    polygon(points2, {fill: false}),
     outline(out),
     color(RED)
     ])
