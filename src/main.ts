@@ -28,6 +28,7 @@ export const HEART_BORDER_THICKNESS = 4
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
 // TODO: Add current players velocity on top of pollen velocity?
+// TODO: Add bar on top of player to show pollen count instead of a simple counter?
 // TODO: Add i-frames (fixes double collision bug)
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.

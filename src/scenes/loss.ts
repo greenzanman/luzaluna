@@ -12,7 +12,7 @@ export function mountLossScene() {
         ]);
 
         const retryBtn = add([
-            rect(300, 50, {fill: false}),
+            rect(300, 50),
             pos(textPos.add(vec2(0, 150))),
             area(),
             anchor("center"),
