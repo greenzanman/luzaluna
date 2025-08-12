@@ -6,6 +6,7 @@ interface PollenCountComp extends Comp {
     increasePollens: () => void;
     decreasePollens: () => void;
     getPollens:() => number;
+    getPollenPercentage: () => number;
 }
 
 function pollenCountComp(pollens: number): PollenCountComp {
@@ -24,6 +25,12 @@ function pollenCountComp(pollens: number): PollenCountComp {
             getPollens() 
             {
                 return this.curr_pollens;
+            },
+            getPollenPercentage()
+            {
+                const percentage = Math.round(this.curr_pollens / pollens * 100) / 100;
+                debug.log(percentage);
+                return this.curr_pollens / pollens;
             },
             draw() 
             {

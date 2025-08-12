@@ -117,8 +117,6 @@ export function mountGameScene() {
         document.addEventListener("mousemove", (event: MouseEvent) => {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
-
-            debug.log(`HTML position: (${mouseX}, ${mouseY})\n Kaplay position: ${mousePos()}`);
         });
     
         // Tick function
@@ -142,7 +140,8 @@ export function mountGameScene() {
             {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
-            //debug.log("Pollens:", player.curr_pollens);
+
+            pollenCount.getPollenPercentage();
         });
     });
 }
