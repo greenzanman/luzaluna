@@ -18,6 +18,7 @@ import {createPlayer} from "../game_objects/player"
 import {createFlower} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createBorder} from "../game_objects/border"
+import { createHex } from "../game_objects/hexagon"
 
 import {createHeart} from "../game_objects/heart"
 import {createHealthBar} from "../game_objects/healthBar"
@@ -38,6 +39,7 @@ export function mountGameScene() {
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
         const rect = canvas.getBoundingClientRect();
         const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+        const hex = createHex(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
 
         // Create player
         const player = createPlayer(borderWidth / 2, borderHeight / 2, border);
@@ -45,8 +47,19 @@ export function mountGameScene() {
         // Create arrow
         const arrow = createArrow(player)
 
+        // Generates array of pairs of neighboring points.
+        const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
+
+        // For each segment interpolate the flowers along the segment.
+        segments.forEach(([start, end]) => {
+            Array.from({ length: 20 }).forEach((_, j) => {
+                const position = vec2(lerp(start.x, end.x, j / 20),lerp(start.y, end.y, j / 20));
+                createFlower(position, 3, player, border);
+            });
+        });
+
         
-        
+        /*
         // Create flowers
         for (let i = 0; i < borderWidth - BORDER_THICKNESS; i += FLOWER_SPACING) {
             // Top flowers
@@ -63,6 +76,7 @@ export function mountGameScene() {
             // Right flowers
             createFlower(borderWidth - FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 2, player, border)
         }
+        */
 
         // Create health bar
         const healthBar = createHealthBar(-BORDER_THICKNESS / 2, -BORDER_THICKNESS / 2, 40, border)
@@ -140,8 +154,6 @@ export function mountGameScene() {
             {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
-
-            pollenCount.getPollenPercentage();
         });
     });
 }

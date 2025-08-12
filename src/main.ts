@@ -12,6 +12,8 @@ export const PADDING_VERT = 60
 export const PADDING_HORIZ = 20
 export const BORDER_THICKNESS = 16
 
+export const HEXAGON_SIDE = 40
+
 export const FLOWER_SPACING = 25
 export const GRAVITY = 15000
 export const BUMP_SPEED = 20000
@@ -27,7 +29,7 @@ export const HEART_BORDER_THICKNESS = 4
 
 // TODO: Add scoreboard
 // TODO: Add current players velocity on top of pollen velocity?
-// TODO: Add bar on top of player to show pollen count instead of a simple counter?
+// TODO: Add bar on top of player to show pollen count instead of a simple counter.
 // TODO: Add i-frames (fixes double collision bug)
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
