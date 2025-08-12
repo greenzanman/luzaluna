@@ -10,10 +10,11 @@ function healthBarComp(): HealthBarComp {
         }
 }
 
-export function createHealthBar(xPos: number, yPos: number, heart_size: number): GameObj {
-    return add([
+export function createHealthBar(xPos: number, yPos: number, heart_size: number, border: GameObj): GameObj {
+    return border.add([
         pos(xPos, yPos),
         rect(heart_size * HEALTH_CAPACITY, heart_size),
+        anchor("botleft"),
         healthBarComp(),
         opacity(0),
         "healthBar"

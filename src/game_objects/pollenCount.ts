@@ -32,12 +32,13 @@ function pollenCountComp(pollens: number): PollenCountComp {
         }
 }
 
-export function createPollenCount(xPos: number, yPos: number, txt: string): GameObj {
-    return add([
+export function createPollenCount(xPos: number, yPos: number, txt: string, border: GameObj): GameObj {
+    return border.add([
         pos(xPos, yPos),
         text(txt),
         color(BLACK),
         scale(.5),
+        anchor("botleft"),
         pollenCountComp(POLLEN_CAPACITY),
         "pollenCount"
     ]);

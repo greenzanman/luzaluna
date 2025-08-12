@@ -11,8 +11,8 @@ function borderComp(): BorderComp {
     };
 }
 
-export function createBorder(position: Vec2, width: number, height:number, out:number): void {
-    add([
+export function createBorder(position: Vec2, width: number, height:number, out:number): GameObj {
+    return add([
     pos(position),
     rect(width, height, {fill: false}),
     outline(out),

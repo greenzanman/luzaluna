@@ -29,7 +29,7 @@ function heartComp(): HeartComp {
 export function createHeart(xPos: number, yPos: number, out: number, out_color: Color, healthBar: GameObj): void {
     let heart = healthBar.add([
         circle(20),
-        anchor("center"),
+        anchor("botleft"),
         pos(xPos, yPos),
         heartComp(),
         outline(out, out_color),

@@ -22,12 +22,13 @@ function customTimerComp(start_time: number): CustomTimerComp {
         }
 }
 
-export function createCustomTimer(xPos: number, yPos: number, txt: string, start_time: number): GameObj {
-    return add([
+export function createCustomTimer(xPos: number, yPos: number, txt: string, start_time: number, border: GameObj): GameObj {
+    return border.add([
         pos(xPos, yPos),
         text(txt),
         color(BLACK),
         scale(.5),
+        anchor("botleft"),
         customTimerComp(start_time),
         "customTimer"
     ]);

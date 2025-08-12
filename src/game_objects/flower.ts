@@ -37,8 +37,8 @@ function flowerComp(flowerType: number): FlowerComp {
     };
 }
 
-export function createFlower(x: number, y: number, flowerType: number, player: GameObj) {
-    let flower = add([
+export function createFlower(x: number, y: number, flowerType: number, player: GameObj, border: GameObj) {
+    let flower = border.add([
         rect(20, 20),
         area(),
         anchor("center"),

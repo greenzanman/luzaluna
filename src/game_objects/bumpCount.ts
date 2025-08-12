@@ -27,12 +27,13 @@ function bumpCountComp(): BumpCountComp {
         }
 }
 
-export function createBumpCount(xPos: number, yPos: number, txt: string): GameObj {
-    return add([
+export function createBumpCount(xPos: number, yPos: number, txt: string, border: GameObj): GameObj {
+    return border.add([
         pos(xPos, yPos),
         text(txt),
         color(BLACK),
         scale(.5),
+        anchor("botleft"),
         bumpCountComp(),
         "pollenCount"
     ]);

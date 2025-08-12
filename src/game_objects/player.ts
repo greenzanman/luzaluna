@@ -1,4 +1,4 @@
-import type { Comp, Vec2 } from "kaplay";
+import type { Comp, Vec2, GameObj } from "kaplay";
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY, HEALTH_CAPACITY} from "../main"
 
 
@@ -39,8 +39,8 @@ function playerComp(velocity: Vec2): PlayerComp {
     }
 }
 
-export function createPlayer(x: number, y: number) {
-    return add([
+export function createPlayer(x: number, y: number, border: GameObj): GameObj {
+    return border.add([
         playerComp(vec2(0, -5000)),
         health(HEALTH_CAPACITY),
         area(),

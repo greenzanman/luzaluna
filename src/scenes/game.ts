@@ -32,48 +32,55 @@ import {createArrow} from "../game_objects/arrow"
 
 export function mountGameScene() {
     scene("game", () => {
+
+        // Create border
+        const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
+        const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
+        const rect = canvas.getBoundingClientRect();
+        const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+
         // Create player
-        const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        const player = createPlayer(borderWidth / 2, borderHeight / 2, border);
 
         // Create arrow
         const arrow = createArrow(player)
+
+        
         
         // Create flowers
-        for (let i = PADDING_HORIZ; i < SCREEN_WIDTH - PADDING_HORIZ; i += FLOWER_SPACING) {
+        for (let i = 0; i < borderWidth - BORDER_THICKNESS; i += FLOWER_SPACING) {
             // Top flowers
-            createFlower(FLOWER_SPACING / 2 + i, FLOWER_SPACING / 2 + PADDING_VERT, 3, player)
+            createFlower(FLOWER_SPACING / 2 + i, FLOWER_SPACING / 2, 3, player, border)
 
             // Bottom flowers
-            createFlower(FLOWER_SPACING / 2 + i, SCREEN_HEIGHT - FLOWER_SPACING / 2 - PADDING_VERT, 1, player)
+            createFlower(FLOWER_SPACING / 2 + i, borderHeight - FLOWER_SPACING / 2, 1, player, border)
         }
     
-        for (let i = PADDING_VERT; i < SCREEN_HEIGHT - PADDING_VERT; i += FLOWER_SPACING) {
+        for (let i = 0; i < borderHeight - BORDER_THICKNESS; i += FLOWER_SPACING) {
             // Left flowers
-            createFlower(FLOWER_SPACING / 2 + PADDING_HORIZ, FLOWER_SPACING / 2 + i, 0, player)
+            createFlower(FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 0, player, border)
 
             // Right flowers
-            createFlower(SCREEN_WIDTH - FLOWER_SPACING / 2 - PADDING_HORIZ, FLOWER_SPACING / 2 + i, 2, player)
+            createFlower(borderWidth - FLOWER_SPACING / 2, FLOWER_SPACING / 2 + i, 2, player, border)
         }
-
-        // Create border
-        createBorder(vec2(PADDING_HORIZ, PADDING_VERT), SCREEN_WIDTH - PADDING_HORIZ * 2, SCREEN_HEIGHT - PADDING_VERT * 2, BORDER_THICKNESS)
-
-        // Create timer
-        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
-
-        // Create pollen count
-        const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70, "Pollens: 2")
-
-        // Creat bump count
-        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 225, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
 
         // Create health bar
-        const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
+        const healthBar = createHealthBar(-BORDER_THICKNESS / 2, -BORDER_THICKNESS / 2, 40, border)
 0
         // Create hearts
-        for (let i = 0, j = 0; i < SCREEN_WIDTH - PADDING_HORIZ && j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
-            createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
+        let i = 0
+        for (let j = 0; i < SCREEN_WIDTH - PADDING_HORIZ && j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
+            createHeart(10 + i, -10, 4, BLACK, healthBar)
         }
+
+        // Create timer
+        const customTimer = createCustomTimer(10 + i, -30, "Time: 0", time(), border);
+
+        // Create pollen count
+        const pollenCount = createPollenCount(150 + i,-30, "Pollens: 2", border)
+
+        // Creat bump count
+        const bumpCount = createBumpCount(300 + i, -30, "Bumps: 0", border)
 
         
 
@@ -106,13 +113,20 @@ export function mountGameScene() {
             go("loss");
         })
         */
+
+        document.addEventListener("mousemove", (event: MouseEvent) => {
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            debug.log(`HTML position: (${mouseX}, ${mouseY})\n Kaplay position: ${mousePos()}`);
+        });
     
         // Tick function
         onUpdate(() => {
             // Shooting pollen
-            if (isMousePressed() && pollenCount.getPollens())
+            if (isMouseDown() && pollenCount.getPollens())
             {
-                let dir = mousePos().sub(player.worldPos()).unit()
+                let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))
 
@@ -120,8 +134,11 @@ export function mountGameScene() {
             }
     
             // Loss condition
-            if (player.worldPos().x < 0 || player.worldPos().x > SCREEN_WIDTH ||
-                player.worldPos().y < 0 || player.worldPos().y > SCREEN_HEIGHT)
+            const playerPos = player.worldPos()
+            if ( playerPos.x < rect.right / 2 - borderWidth / 2 || // Left Bound
+                playerPos.x  > rect.right / 2 + borderWidth / 2  || // Right Bound
+                playerPos.y > rect.bottom / 2 + borderHeight / 2  ||  // Bottom Bound
+                playerPos.y < rect.bottom / 2 - borderHeight / 2) // Top Bound
             {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
