@@ -20,7 +20,7 @@ function heartComp(): HeartComp {
             },
             draw() {
                 if(!this.heartState) {
-                    drawCircle({pos: vec2(0, 0), radius: 20})
+                    drawCircle({anchor: "botleft", pos: vec2(0, 0), radius: 20})
                 }
             }
         }
