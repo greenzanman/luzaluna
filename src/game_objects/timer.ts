@@ -1,5 +1,4 @@
-import type { Comp, Vec2, GameObj } from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY, HEALTH_CAPACITY} from "../main"
+import type { Comp, GameObj } from "kaplay";
 
 interface CustomTimerComp extends Comp {
     curr_time: number;

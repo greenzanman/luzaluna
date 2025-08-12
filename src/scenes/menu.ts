@@ -1,5 +1,3 @@
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
-
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 

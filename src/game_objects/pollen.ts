@@ -1,5 +1,5 @@
-import type { Comp, Vec2, GameObj} from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
+import type { Comp, Vec2} from "kaplay";
+import {POLLEN_SPEED} from "../main"
 
 interface PollenComp extends Comp {
     xVel: number,
@@ -29,6 +29,9 @@ export function createPollen(position: Vec2, dir: Vec2) {
     ]);
 
     pollen.onCollide("flower", () => {
+        pollen.destroy();
+    })
+    pollen.onCollide("wasp", () => {
         pollen.destroy();
     })
 }

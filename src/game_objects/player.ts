@@ -1,5 +1,5 @@
 import type { Comp, Vec2 } from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY, HEALTH_CAPACITY} from "../main"
+import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY} from "../main"
 
 
 // Player Object
@@ -10,6 +10,7 @@ export interface PlayerComp extends Comp {
     bumpX: (cause: Vec2, coef: number) => void;
     bumpY: (cause: Vec2, coef: number) => void;
     push: (dir: Vec2) => void;
+    takedamage: (damage: number) => void;
 }
 
 function playerComp(velocity: Vec2): PlayerComp {
@@ -36,6 +37,11 @@ function playerComp(velocity: Vec2): PlayerComp {
         {
             this.velocity = this.velocity.add(dir);
         },
+        takedamage(damage: number)
+        {
+            this.hurt(damage);
+            shake(6 * damage);
+        }
     }
 }
 

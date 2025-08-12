@@ -22,16 +22,19 @@ import {createBorder} from "../game_objects/border"
 import {createHeart} from "../game_objects/heart"
 import {createHealthBar} from "../game_objects/healthBar"
 
-import {createPollenCount} from "../game_objects/pollenCount"
+import {createAmmoCount} from "../game_objects/ammoCount"
 
 import {createCustomTimer} from "../game_objects/timer"
 
 import {createBumpCount} from "../game_objects/bumpCount"
+import { createWasp } from "../game_objects/wasp"
+import { spawn } from "child_process"
 
 export function mountGameScene() {
     scene("game", () => {
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        let mousePressed = false
         
         // Create flowers
         for (let i = PADDING_HORIZ; i < SCREEN_WIDTH - PADDING_HORIZ; i += FLOWER_SPACING) {
@@ -57,7 +60,7 @@ export function mountGameScene() {
         const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
 
         // Create pollen count
-        const pollenCount = createPollenCount(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70, "Pollens: 2")
+        const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50)
 
         // Creat bump count
         const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 225, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
@@ -70,16 +73,9 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
         }
 
-        
-
-        // Regening pollen function
-        loop(POLLEN_RECHARGE_RATE, () => {
-            pollenCount.increasePollens();
-        })
-
         // Bump event listener
         on("bump", "*", () => {
-            pollenCount.increasePollens();
+            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
             bumpCount.increaseBumps();
         })
 
@@ -90,37 +86,82 @@ export function mountGameScene() {
 
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
-                //player.trigger("death")
             }
         })
 
-        // Goes to loss scene when player dies.
-        /*
-        player.onDeath(() => {
-            debug.log("Death")
-            go("loss");
-        })
-        */
+        let waspPatience = 2
+        function CreateEnemies() {
+            waspPatience -= dt()
+            if (waspPatience < 0)
+            {
+                waspPatience += 5
+                let spawnLoc = vec2(0, 0)
+                switch (Math.floor(rand(4)))
+                {
+                    case 0:
+                        spawnLoc = vec2(0, 0)
+                        break;
+                    case 1:
+                        spawnLoc = vec2(SCREEN_WIDTH, 0)
+                        break;
+                    case 2:
+                        spawnLoc = vec2(SCREEN_HEIGHT, SCREEN_HEIGHT)
+                        break;
+                    case 3:
+                        spawnLoc = vec2(0, SCREEN_HEIGHT)
+                        break;
+                }
+                createWasp(spawnLoc, player)
+            }
+        }
     
         // Tick function
         onUpdate(() => {
-            // Shooting pollen
-            if (isMousePressed() && pollenCount.getPollens())
+            // QOL click and hold
+            if (isMousePressed())
             {
+                mousePressed = true
+            }
+            // Shooting pollen
+            if (isMouseDown() && mousePressed)
+            {
+                if (ammoCount.GetAmmo() >= 1)
+                {
                 let dir = mousePos().sub(player.worldPos()).unit()
+                ammoCount.DecreaseAmmo(1)
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))
+                }
+                else // Force release and reclick once out of pollen
+                {
+                    mousePressed = false
+                }
+            }
 
-                pollenCount.decreasePollens();
-            }
-    
             // Loss condition
-            if (player.worldPos().x < 0 || player.worldPos().x > SCREEN_WIDTH ||
-                player.worldPos().y < 0 || player.worldPos().y > SCREEN_HEIGHT)
+            if (player.worldPos().x < PADDING_HORIZ + 30)
             {
-                go("loss", customTimer.getTime(), bumpCount.getBumps());
+                player.bumpY(player.worldPos(), 1);
+                player.takedamage(1)
             }
-            //debug.log("Pollens:", player.curr_pollens);
+            if (player.worldPos().x > SCREEN_WIDTH - PADDING_HORIZ - 30)
+            {
+                player.bumpY(player.worldPos(), -1);
+                player.takedamage(1)
+            }
+            if (player.worldPos().y < PADDING_VERT + 30)
+            {
+                player.bumpX(player.worldPos(), 1);
+                player.takedamage(1)
+            }
+            if (player.worldPos().y > SCREEN_HEIGHT - PADDING_VERT - 30)
+            {
+                player.bumpX(player.worldPos(), -1);
+                player.takedamage(1)
+            }
+
+            CreateEnemies();
+
         });
     });
 }

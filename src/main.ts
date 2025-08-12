@@ -13,17 +13,19 @@ export const PADDING_HORIZ = 20
 export const BORDER_THICKNESS = 16
 
 export const FLOWER_SPACING = 25
-export const GRAVITY = 15000
-export const BUMP_SPEED = 20000
+export const GRAVITY = 10000
+export const BUMP_SPEED = 12000
 export const POLLEN_SPEED = 30000
-export const POLLEN_PUSH = 500 * 10
+export const POLLEN_PUSH = 200
 
-export const POLLEN_CAPACITY = 2
-export const POLLEN_RECHARGE_RATE = 3
+export const POLLEN_CAPACITY = 30
+export const POLLEN_RECHARGE_RATE = 6
 
-export const HEALTH_CAPACITY = 4
+export const HEALTH_CAPACITY = 100
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
+
+export const WASP_SPEED = 4000
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
