@@ -66,7 +66,7 @@ export function mountGameScene() {
 0
         // Create hearts
         let i = 0
-        for (let j = 0; i < SCREEN_WIDTH - PADDING_HORIZ || j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
+        for (let j = 0; j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
             createHeart(10 + i, -10, 4, BLACK, healthBar)
         }
 
@@ -124,7 +124,7 @@ export function mountGameScene() {
     
         // Tick function
         onUpdate(() => {
-            debug.log(player.getPlayerState())
+            debug.log(player.hp())
             // Shooting pollen
             if (isMouseDown() && pollenCount.getPollens())
             {

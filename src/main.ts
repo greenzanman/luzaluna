@@ -21,7 +21,7 @@ export const POLLEN_PUSH = 500 * 1
 export const POLLEN_CAPACITY = 3000
 export const POLLEN_RECHARGE_RATE = 3
 
-export const HEALTH_CAPACITY = 4
+export const HEALTH_CAPACITY = 16
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
 export const INVINC_DURATION = 2
