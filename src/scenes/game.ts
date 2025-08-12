@@ -28,10 +28,15 @@ import {createCustomTimer} from "../game_objects/timer"
 
 import {createBumpCount} from "../game_objects/bumpCount"
 
+import {createArrow} from "../game_objects/arrow"
+
 export function mountGameScene() {
     scene("game", () => {
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+        // Create arrow
+        const arrow = createArrow(player)
         
         // Create flowers
         for (let i = PADDING_HORIZ; i < SCREEN_WIDTH - PADDING_HORIZ; i += FLOWER_SPACING) {
