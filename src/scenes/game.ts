@@ -116,11 +116,6 @@ export function mountGameScene() {
             go("loss");
         })
         */
-
-        document.addEventListener("mousemove", (event: MouseEvent) => {
-            const mouseX = event.clientX;
-            const mouseY = event.clientY;
-        });
     
         // Tick function
         onUpdate(() => {
@@ -129,7 +124,7 @@ export function mountGameScene() {
             if (isMouseDown() && pollenCount.getPollens())
             {
                 let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
-                createPollen(player.worldPos(), dir)
+                createPollen(player.worldPos(), dir, player.velocity.len())
                 player.push(dir.scale(-POLLEN_PUSH))
 
                 pollenCount.decreasePollens();

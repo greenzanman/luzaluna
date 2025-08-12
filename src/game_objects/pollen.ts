@@ -6,25 +6,25 @@ interface PollenComp extends Comp {
     yVel: number
 }
 
-function pollenComp(xVel: number, yVel: number): PollenComp {
+function pollenComp(vel: Vec2): PollenComp {
     return {
         id: "pollenComp",
         require: ["pos"],
-        xVel: xVel,
-        yVel: yVel,
+        xVel: vel.x,
+        yVel: vel.y,
         update() {
-            this.move(xVel * dt(), yVel * dt())
+            this.move(vel.scale(dt()))
         }
     };
 }
 
-export function createPollen(position: Vec2, dir: Vec2) {
+export function createPollen(position: Vec2, dir: Vec2, speed_offset: number) {
     let pollen = add([
         rect(6, 6),
         area(),
         anchor("center"),
         pos(position.x, position.y),
-        pollenComp(dir.x * POLLEN_SPEED, dir.y * POLLEN_SPEED),
+        pollenComp(dir.scale(POLLEN_SPEED + speed_offset)),
         "pollen"
     ]);
 

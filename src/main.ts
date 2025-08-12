@@ -29,7 +29,6 @@ export const INVINC_DURATION = 2
 // TODO: Add scoreboard
 // TODO: Add current players velocity on top of pollen velocity?
 // TODO: Add bar on top of player to show pollen count instead of a simple counter.
-// TODO: Fix health bug
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
 
