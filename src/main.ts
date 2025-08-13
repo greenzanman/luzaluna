@@ -15,7 +15,8 @@ export const BORDER_THICKNESS = 16
 export const FLOWER_SPACING = 10
 export const GRAVITY = 15000
 export const BUMP_SPEED = 30000
-export const POLLEN_SPEED = 30000
+export const ROTATION_FACTOR = 500
+export const POLLEN_SPEED = 10000
 export const POLLEN_PUSH = 500 * 1
 
 export const POLLEN_CAPACITY = 3000
@@ -27,7 +28,6 @@ export const HEART_BORDER_THICKNESS = 4
 export const INVINC_DURATION = 2
 
 // TODO: Add scoreboard
-// TODO: Add current players velocity on top of pollen velocity?
 // TODO: Add bar on top of player to show pollen count instead of a simple counter.
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.

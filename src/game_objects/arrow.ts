@@ -7,22 +7,24 @@ export interface ArrowComp extends Comp {}
 function arrowComp(player: GameObj): ArrowComp {
     return {
         id: "ArrowComp",
+        update() {
+            this.pos = player.worldPos()
+        },
         draw() {
-            mousePos().sub(player.worldPos()).unit()
             this.angle = mousePos().sub(player.worldPos()).unit().scale(-1).angle() - 90
         },
     }
 }
 
 export function createArrow(player: GameObj): GameObj{
-    player.add([
+    const arrow = add([
         arrowComp(player),
         area(),
         rect(5, 60),
-        pos(0, 0),
+        pos(player.worldPos()),
         color(RED),
         "arrow"
     ]);
 
-    return player.get("arrow")[0]
+    return arrow
 }

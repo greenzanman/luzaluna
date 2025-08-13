@@ -111,21 +111,27 @@ export function createFlower(position: Vec2, flowerType: number, player: GameObj
         {
             case 0: // Bottom left 
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
             case 1: // Bottom
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
             case 2: // Bottom right
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
             case 3: // Top right
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
             case 4: // Top 
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
             case 5: // Top left
                 player.bump(flower.worldPos(), 1);
+                player.spin(rand(-1, 1))
                 break;
         }
     })
