@@ -11,6 +11,7 @@ export interface PlayerComp extends Comp {
     bump: (cause: Vec2, coef: number, biasX: number, biasY: number) => void;
     spin: (coef: number) => void;
     push: (dir: Vec2) => void;
+    emitParticles: (numParticles: number) => void;
     setPlayerState: (state: number) => void;
     getPlayerState: () => number;
 }
@@ -43,6 +44,30 @@ function playerComp(velocity: Vec2, ang_velocity: number): PlayerComp {
         {
             this.velocity = this.velocity.add(dir);
         },
+        emitParticles(numParticles: number)
+        {
+            // TODO: Find out if particle emitter is being properly destroyed
+            let loadedSpriteData = getSprite("bean").data;
+            console.log(loadedSpriteData)
+            let particleEmitter = add([
+                pos(this.worldPos()),
+                timer(),
+                particles({
+                    max: numParticles,
+                    speed: [75, 500],
+                    lifeTime: [0.75,1.0],
+                    angle: [0, 360],
+                    opacities: [1.0, 0.0],
+                    texture: loadedSpriteData.tex, // texture of the sprite
+                    quads: loadedSpriteData.frames, // to tell whe emitter what frames of the sprite to use
+                }, {
+                    direction: 0,
+                    spread: 360,
+                    lifetime: 1.0,
+                }),
+            ])
+            particleEmitter.emit(numParticles);
+        },
         setPlayerState(state: number)
         {
             this.playerState = state;
@@ -55,7 +80,7 @@ function playerComp(velocity: Vec2, ang_velocity: number): PlayerComp {
 }
 
 export function createPlayer(x: number, y: number, border: GameObj): GameObj {
-    return border.add([
+    const player = border.add([
         playerComp(vec2(0, -5000), 300),
         health(HEALTH_CAPACITY),
         area(),
@@ -67,4 +92,11 @@ export function createPlayer(x: number, y: number, border: GameObj): GameObj {
         color(0.5, 0.5, 1),
         "player"
     ]);
+
+    //  TODO: Fix asynchronous issue here
+    debug.log("Starting load sprite")
+    loadSprite("bean", "icon.png").then(() => {
+        debug.log('Finished loading sprite')
+    })
+    return player
 }

@@ -104,6 +104,10 @@ export function mountGameScene() {
             player.setPlayerState(1);
             player.wait(INVINC_DURATION, () => {player.setPlayerState(0)});
 
+            // Emit particles
+            debug.log("Emitting particles");
+            player.emitParticles(10)
+
             // Checks death condition.
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
