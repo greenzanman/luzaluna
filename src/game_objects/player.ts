@@ -29,7 +29,6 @@ function playerComp(velocity: Vec2, ang_velocity: number): PlayerComp {
 
             // Handles rotation
             this.rotateBy(this.ang_velocity * dt())
-            debug.log(this.ang_velocity)
         },
         bump(cause: Vec2, coef: number) {
             let bumpDir = this.worldPos().add(cause.scale(-1)).unit();

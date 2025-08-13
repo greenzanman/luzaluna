@@ -9,8 +9,6 @@ function arrowComp(player: GameObj): ArrowComp {
         id: "ArrowComp",
         update() {
             this.pos = player.worldPos()
-        },
-        draw() {
             this.angle = mousePos().sub(player.worldPos()).unit().scale(-1).angle() - 90
         },
     }

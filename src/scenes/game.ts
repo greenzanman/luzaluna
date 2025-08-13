@@ -39,7 +39,7 @@ export function mountGameScene() {
         const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
         const borderPos = vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2)
-        //const border = createBorder(vec2(rect.right / 2 - borderWidth / 2, rect.bottom / 2 - borderHeight / 2), borderWidth, borderHeight, BORDER_THICKNESS)
+
         const hex = createHexBorder(borderPos, borderWidth, borderHeight, BORDER_THICKNESS)
 
         // Create player
@@ -82,7 +82,7 @@ export function mountGameScene() {
         
 
         // Regening pollen function
-        loop(POLLEN_RECHARGE_RATE, () => {
+        pollenCount.loop(POLLEN_RECHARGE_RATE, () => {
             pollenCount.increasePollens();
         })
 
@@ -105,39 +105,31 @@ export function mountGameScene() {
             // Checks death condition.
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
-                //player.trigger("death")
             }
         })
 
-        // Goes to loss scene when player dies.
-        /*
-        player.onDeath(() => {
-            debug.log("Death")
-            go("loss");
-        })
-        */
-    
-        // Tick function
-        onUpdate(() => {
-            debug.log(player.hp())
-            // Shooting pollen
-            if (isMouseDown() && pollenCount.getPollens())
-            {
+        onMouseDown(() => {
+            if (pollenCount.getPollens()) {
                 let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
                 createPollen(player.worldPos(), dir, player.velocity.len())
                 player.push(dir.scale(-POLLEN_PUSH))
 
                 pollenCount.decreasePollens();
             }
+        })
     
-            // Loss condition
+        // Tick function
+        onUpdate(() => {
+    
+            // If player clips out of the world
             const playerPos = player.worldPos()
             if ( playerPos.x < borderPos.x || // Left Bound
                 playerPos.x  > borderPos.x + borderWidth  || // Right Bound
                 playerPos.y > borderPos.y + borderHeight  ||  // Bottom Bound
                 playerPos.y < borderPos.y) // Top Bound
             {
-                go("loss", customTimer.getTime(), bumpCount.getBumps());
+                debug.log("Out of bounds")
+                player.pos = vec2(borderWidth / 2, borderHeight / 2)
             }
         });
     });

@@ -44,6 +44,7 @@ export function createPollenCount(xPos: number, yPos: number, txt: string, borde
         pos(xPos, yPos),
         text(txt),
         color(BLACK),
+        timer(),
         scale(.5),
         anchor("botleft"),
         pollenCountComp(POLLEN_CAPACITY),
