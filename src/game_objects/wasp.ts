@@ -2,7 +2,6 @@ import type { Comp, Vec2, GameObj, PosComp, HealthComp } from "kaplay";
 import {WASP_SPEED} from "../main";
 import { PlayerComp } from "./player";
 
-
 // Wasp Object
 
 export interface WaspComp extends Comp {
@@ -16,7 +15,6 @@ function waspComp(target: GameObj<PosComp>): WaspComp {
         target: target,
         update() {
             let dir = target.worldPos().sub(this.worldPos()).unit()
-            console.log(target.worldPos(), this.worldPos(), dir)
             this.move(dir.x * WASP_SPEED * dt(), dir.y * WASP_SPEED * dt())
         }
     }

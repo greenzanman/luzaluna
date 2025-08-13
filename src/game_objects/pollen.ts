@@ -34,4 +34,7 @@ export function createPollen(position: Vec2, dir: Vec2) {
     pollen.onCollide("wasp", () => {
         pollen.destroy();
     })
+    pollen.onCollide("bigWasp", () => {
+        pollen.destroy();
+    })
 }

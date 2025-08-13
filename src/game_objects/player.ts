@@ -7,31 +7,36 @@ import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY} from "../main"
 export interface PlayerComp extends Comp {
     playerState: number;
     velocity: Vec2;
-    bumpX: (cause: Vec2, coef: number) => void;
-    bumpY: (cause: Vec2, coef: number) => void;
+    invulTimer: number;
+    bump: (cause: Vec2, direction: Vec2) => void;
+    setVelocity: (newVelocity: Vec2) => void;
     push: (dir: Vec2) => void;
     takedamage: (damage: number) => void;
 }
 
-function playerComp(velocity: Vec2): PlayerComp {
+function playerComp(startVelocity: Vec2): PlayerComp {
     return {
         id: "playerComp",
         playerState: 0,
-        velocity: velocity,
+        velocity: startVelocity,
         require: ["health"],
+        invulTimer: 0,
         update() {
             this.velocity.y += GRAVITY * dt();
             this.move(this.velocity.x * dt(), this.velocity.y * dt());
+        
+            this.invulTimer = Math.max(0, this.invulTimer - dt());
         },
-        bumpX(cause: Vec2, coef: number) {
-            let offset = this.worldPos().add(cause.scale(-1)).unit();
-            this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
-            this.velocity.y =  BUMP_SPEED * coef;
+        setVelocity(newVelocity: Vec2) {
+            this.velocity = newVelocity  
         },
-        bumpY(cause: Vec2, coef: number) {
-            let offset = this.worldPos().add(cause.scale(-1)).unit();
-            this.velocity = this.velocity.add(0, offset.y * BUMP_SPEED)
-            this.velocity.x = BUMP_SPEED * coef
+        bump(cause: Vec2, direction: Vec2) {
+            let offset = this.worldPos().sub(cause).unit();
+            //this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
+            let dirProj = direction.scale(this.velocity.dot(direction) / direction.len() / direction.len())
+            this.velocity = this.velocity.sub(dirProj);
+            //this.velocity = direction.unit().scale(BUMP_SPEED);
+            this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED));
         },
         push(dir: Vec2)
         {
@@ -39,8 +44,12 @@ function playerComp(velocity: Vec2): PlayerComp {
         },
         takedamage(damage: number)
         {
-            this.hurt(damage);
-            shake(6 * damage);
+            if (this.invulTimer == 0)
+            {
+                this.hurt(damage);
+                shake(6 * damage);
+                this.invulTimer = 0.05;
+            }
         }
     }
 }

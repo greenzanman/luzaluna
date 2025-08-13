@@ -16,7 +16,7 @@ export const FLOWER_SPACING = 25
 export const GRAVITY = 10000
 export const BUMP_SPEED = 12000
 export const POLLEN_SPEED = 30000
-export const POLLEN_PUSH = 200
+export const POLLEN_PUSH = 300
 
 export const POLLEN_CAPACITY = 30
 export const POLLEN_RECHARGE_RATE = 6

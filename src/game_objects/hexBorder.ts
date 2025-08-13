@@ -1,0 +1,34 @@
+import type { Comp, Vec2, GameObj} from "kaplay";
+
+interface HexBorderComp extends Comp {}
+
+function hexBorderComp(): HexBorderComp {
+    return {
+        id: "borderComp",
+        require: ["pos", "polygon", "outline", "color"],
+    };
+}
+
+export function createHexBorder(position: Vec2, width: number, height:number, out:number): GameObj {
+    /** 
+     * ***
+     * ***
+    */
+    const x = width / (1 + Math.SQRT2)
+    const myHeight = height / 2
+    const points2 = [
+        vec2(0, myHeight), 
+        vec2(x/Math.SQRT2, myHeight * 2), 
+        vec2(x/Math.SQRT2 + x, myHeight * 2), 
+        vec2(2 * x/Math.SQRT2 + x, myHeight), 
+        vec2(x/Math.SQRT2 + x, 0), 
+        vec2(x/Math.SQRT2, 0)
+    ]
+    return add([
+    hexBorderComp(),
+    pos(position),
+    polygon(points2, {fill: false}),
+    outline(out),
+    color(RED)
+    ])
+} 

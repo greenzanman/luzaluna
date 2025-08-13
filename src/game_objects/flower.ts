@@ -7,16 +7,14 @@ import {PlayerComp} from "./player"
 
 interface FlowerComp extends Comp {
     flowerState: number;
-    flowerType: number; // 0 - left, 1 - bottom, 2 - right, 3 - top
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
 }
 
-function flowerComp(flowerType: number): FlowerComp {
+function flowerComp(): FlowerComp {
     return {
         id: "flowerComp",
         flowerState: 0,
-        flowerType: flowerType,
         require: ["pos"],
         getFlowerState(): number {
             return this.flowerState;
@@ -37,13 +35,15 @@ function flowerComp(flowerType: number): FlowerComp {
     };
 }
 
-export function createFlower(x: number, y: number, flowerType: number, player: GameObj) {
-    let flower = add([
+export function createFlower(position: Vec2, flowerDirection: Vec2, player: GameObj<PlayerComp>,
+    border: GameObj
+) {
+    let flower = border.add([
         rect(20, 20),
         area(),
         anchor("center"),
-        pos(x, y),
-        flowerComp(flowerType),
+        pos(position),
+        flowerComp(),
         "flower"
     ]);
     flower.onCollide("pollen", () => {
@@ -52,27 +52,14 @@ export function createFlower(x: number, y: number, flowerType: number, player: G
  
     
     flower.onCollide("player", () => {
-        if (flower.getFlowerState() > 0)
+        if (flower.getFlowerState() == 0)
         {
-            // Dispatch bump event in order to regen pollen.
-            flower.trigger("bump");
-            
-            switch (flowerType)
-            {
-                case 0:
-                    player.bumpY(flower.worldPos(), 1);
-                    break;
-                case 1:
-                    player.bumpX(flower.worldPos(), -1);
-                    break;
-                case 2:
-                    player.bumpY(flower.worldPos(), -1);
-                    break;
-                case 3:
-                    player.bumpX(flower.worldPos(), 1);
-                    break;
-            }
+            player.takedamage(1)
         }
+        // Dispatch bump event in order to regen pollen.
+        flower.trigger("bump");
+    
+        player.bump(flower.worldPos(), flowerDirection);
 
     })
 }

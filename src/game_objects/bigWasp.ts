@@ -1,0 +1,180 @@
+import type { Comp, Vec2, GameObj, PosComp, HealthComp } from "kaplay";
+import { PlayerComp } from "./player";
+
+const PATIENCE_VAL = 6;
+const WASP_MOVE_SPEED = 100;
+const WASP_HEALTH = 100;
+// Wasp Object
+
+export interface BigWaspComp extends Comp {
+    target: GameObj<PosComp>;
+    health: number;
+    patience: number;
+    mode: number;
+    state: number;
+    moving: boolean;
+    moveTarget: Vec2;
+    center: Vec2;
+    dimensions: Vec2;
+    think: (deltaTime: number) => void;
+    updateState: () => number;
+    updateMode: () => void;
+    performActions: (deltaTime: number) => void;
+    hurt: () => void;
+}
+
+function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: Vec2): BigWaspComp {
+    return {
+        id: "BigWaspComp",
+        require: ["pos", "rotate"],
+        target: target,
+        health: WASP_HEALTH,    
+        patience: PATIENCE_VAL,
+        mode: 0, // 0 - idle, 1 - move to center, 2 - move to right, 3 - move to left, 4 - charging charge, 5 - charge
+        state: 0, // 0 - move to center, 1 - move side to side, 2 - charging, 3 - charge
+        moving: true,
+        center: newCenter,
+        moveTarget: newCenter,
+        dimensions: newDimensions,
+        update() {
+            this.think(dt())
+            this.performActions(dt())
+        },
+        think (deltaTime: number)
+        {
+            this.patience -= deltaTime
+            if (this.patience < 0)
+            {
+                // Don't do plus?
+                this.patience = this.updateState()
+            }
+        },
+        updateState ()
+        {
+            console.log("Updating state from", this.state)
+            // Choosing next mode
+            switch (this.state)
+            {
+                case 0:
+                    this.state = Math.floor(rand(1, 3))
+                    break;
+                case 1:
+                    this.state = 2
+                    break;
+                case 2: // Charging charge always goes into charge
+                    this.state = 3
+                    this.angle = 0
+                    break;
+                case 3: // 75/25 for doing a nother charge
+                    let randVal = Math.floor(rand(4))
+                    this.state = randVal == 0 ? 0 : 2
+            }
+            // Making decisions mased on that
+            switch (this.state)
+            {
+                case 0:
+                    this.mode = 1
+                    this.moving = true;
+                    this.moveTarget = this.center;
+                    return PATIENCE_VAL / 2;
+                case 1:
+                    this.moving = true;
+                    let randVal = Math.floor(rand(2))
+                    this.mode = 2 + randVal;
+                    this.moveTarget = this.center.add(vec2((1 - 2 * randVal) * newDimensions.x / 2, 0));
+                    return PATIENCE_VAL * 2;
+                case 2:
+                    this.moving = false;
+                    return PATIENCE_VAL / 2;
+                case 3:
+                    this.moving = true;
+                    this.moveTarget = this.target.worldPos().add(
+                    this.target.worldPos().sub(this.worldPos()).unit().scale(150))
+                    return PATIENCE_VAL; // Done through updateMode
+            }
+            return PATIENCE_VAL
+        },
+        updateMode()
+        {
+            switch (this.state)
+            {
+                case 0: // Reached center, meaning stop
+                    this.moving = false;
+                    this.mode = 0;
+                case 1: // Switch to other side
+                    if (this.mode == 2)
+                    {
+                        this.mode = 3;
+                        this.moveTarget = this.center.sub(vec2(newDimensions.x / 2, 0));
+                    }
+                    else
+                    {
+                        this.mode = 2;
+                        this.moveTarget = this.center.add(vec2(newDimensions.x / 2, 0));
+                    }
+                case 2:
+                    return;
+                case 3:
+                    this.updateState();
+            }
+        },
+        performActions (deltaTime: number)
+        {
+                let speed = WASP_MOVE_SPEED * deltaTime
+            switch (this.state)
+            {
+                case 2:
+                    this.angle += dt() * 120
+                case 3:
+                    speed *= 3
+            }
+            if (this.moving)
+            {
+                let dist = this.moveTarget.sub(this.worldPos());
+                if ( dist.len() > speed)
+                {
+                    let movement = dist.unit().scale(speed);
+                    this.moveBy(movement.x, movement.y)            
+                }
+                else
+                {
+                    this.worldPos(this.moveTarget);
+                    this.updateMode()
+                }
+            }
+
+        },
+        hurt()
+        {
+            this.health -= 1;
+            if (this.health <= 0)
+            {
+                this.destroy()
+            }
+        }
+    }
+}
+
+export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>,
+        center: Vec2, dimensions: Vec2
+) {
+    let wasp =  add([
+        pos(position),
+        area(),
+        rotate(),
+        rect(75, 75),
+        anchor("center"),
+        bigWaspComp(player, center, dimensions),
+        color(0.5, 0.5, 1),
+        "bigWasp"
+    ]);
+    
+    wasp.onCollide("pollen", () => {
+        wasp.hurt()
+    });
+
+    wasp.onCollide("player", () => {
+        player.takedamage(1);
+    });
+    return wasp
+}
