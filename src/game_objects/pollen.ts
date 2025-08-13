@@ -1,5 +1,5 @@
 import type { Comp, Vec2, GameObj} from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH, MAX_DT, deltaT} from "../main"
 
 interface PollenComp extends Comp {
     xVel: number,
@@ -13,7 +13,7 @@ function pollenComp(vel: Vec2): PollenComp {
         xVel: vel.x,
         yVel: vel.y,
         update() {
-            this.move(vel.scale(dt()))
+            this.move(vel.scale(deltaT()))
         }
     };
 }

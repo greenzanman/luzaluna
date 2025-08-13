@@ -1,5 +1,5 @@
 import type { Comp, Vec2, GameObj} from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, deltaT} from "../main"
 import {PlayerComp} from "./player"
 
 
@@ -25,7 +25,7 @@ function flowerComp(flowerType: number): FlowerComp {
             this.flowerState = newState
         },
         update() {
-            this.flowerState = Math.max(0, this.flowerState - dt())
+            this.flowerState = Math.max(0, this.flowerState - deltaT())
             this.area.scale = this.flowerState > 0 ? 2 : 1;
         },
         draw() {0

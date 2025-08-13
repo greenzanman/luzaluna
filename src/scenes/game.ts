@@ -59,6 +59,8 @@ export function mountGameScene() {
                 const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
                 createFlower(position, flowerType, player, hex);
             });
+            
+
         });
 
         // Create health bar

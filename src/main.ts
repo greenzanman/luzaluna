@@ -1,10 +1,11 @@
 import kaplay from "kaplay";
 import "kaplay/global"; 
 
-import {mountGameScene} from "./scenes/game"
-import {mountLossScene} from "./scenes/loss"
+import {mountGameScene} from "./scenes/game";
+import {mountLossScene} from "./scenes/loss";
 import {mountMenuScene} from "./scenes/menu";
 
+export const MAX_DT = .0135
 export const SCREEN_WIDTH = 960
 export const SCREEN_HEIGHT = 640
 
@@ -12,7 +13,7 @@ export const PADDING_VERT = 60
 export const PADDING_HORIZ = 60
 export const BORDER_THICKNESS = 16
 
-export const FLOWER_SPACING = 10
+export const FLOWER_SPACING = 15
 export const GRAVITY = 15000
 export const BUMP_SPEED = 30000
 export const ROTATION_FACTOR = 500
@@ -32,6 +33,7 @@ export const INVINC_DURATION = 2
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
 
+export const deltaT = () => {return clamp(dt(), 0, MAX_DT)}
 
 const game: HTMLElement = document.getElementById("game");
 kaplay({

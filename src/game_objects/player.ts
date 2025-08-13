@@ -1,5 +1,5 @@
 import type { Comp, Vec2, GameObj } from "kaplay";
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY, HEALTH_CAPACITY, ROTATION_FACTOR} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_CAPACITY, HEALTH_CAPACITY, ROTATION_FACTOR, MAX_DT, deltaT} from "../main"
 
 
 // Player Object
@@ -22,13 +22,13 @@ function playerComp(velocity: Vec2, ang_velocity: number): PlayerComp {
         velocity: velocity,
         ang_velocity: ang_velocity,
         require: ["health"],
-        update() {
+        update() {            
             // Handles linear movement
-            this.velocity.y += GRAVITY * dt();
-            this.move(this.velocity.x * dt(), this.velocity.y * dt());
+            this.velocity.y += GRAVITY * deltaT();
+            this.move(this.velocity.scale(deltaT()));
 
             // Handles rotation
-            this.rotateBy(this.ang_velocity * dt())
+            this.rotateBy(this.ang_velocity * deltaT())
         },
         bump(cause: Vec2, coef: number) {
             let bumpDir = this.worldPos().add(cause.scale(-1)).unit();

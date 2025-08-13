@@ -35,6 +35,12 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
             outline: outline(out).outline
         })
     })
+
+    const hex = add([
+        hexBorderComp(),
+        pos(position),
+        polygon(points2, {fill: false})
+    ])
     //return add([
     //hexBorderComp(),
     //pos(position),
@@ -42,9 +48,5 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
     //outline(out),
     //color(RED)
     //])
-    return add([
-        hexBorderComp(),
-        pos(position),
-        polygon(points2, {fill: false})
-    ])
+    return hex
 } 
