@@ -5,7 +5,7 @@ import {mountGameScene} from "./scenes/game";
 import {mountLossScene} from "./scenes/loss";
 import {mountMenuScene} from "./scenes/menu";
 
-export const MAX_DT = .0135
+export const MAX_DT = .0130
 export const SCREEN_WIDTH = 960
 export const SCREEN_HEIGHT = 640
 
@@ -29,9 +29,9 @@ export const HEART_BORDER_THICKNESS = 4
 export const INVINC_DURATION = 2
 
 // TODO: Add scoreboard
-// TODO: Add bar on top of player to show pollen count instead of a simple counter.
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
+// TODO: FIX LAG ISSUE?
 
 export const deltaT = () => {return clamp(dt(), 0, MAX_DT)}
 

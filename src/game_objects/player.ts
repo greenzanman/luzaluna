@@ -24,11 +24,12 @@ function playerComp(velocity: Vec2, ang_velocity: number): PlayerComp {
         require: ["health"],
         update() {            
             // Handles linear movement
-            this.velocity.y += GRAVITY * deltaT();
-            this.move(this.velocity.scale(deltaT()));
+            const dT = deltaT() 
+            this.velocity.y += GRAVITY * dT;
+            this.move(this.velocity.scale(dT));
 
             // Handles rotation
-            this.rotateBy(this.ang_velocity * deltaT())
+            this.rotateBy(this.ang_velocity * dT)
         },
         bump(cause: Vec2, coef: number) {
             let bumpDir = this.worldPos().add(cause.scale(-1)).unit();
