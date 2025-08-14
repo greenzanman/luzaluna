@@ -32,7 +32,7 @@ import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
 
 export function mountGameScene() {
-    scene("game", () => {
+    scene("game", (bestTime, bestBumps) => {
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         const arrow = createArrow(player)
@@ -91,7 +91,7 @@ export function mountGameScene() {
             debug.log(player.hp())
 
             if(player.hp() <= 0) {
-                go("loss", customTimer.getTime(), bumpCount.getBumps());
+                go("loss", customTimer.getTime(), bumpCount.getBumps(), bestTime, bestBumps);
             }
 
             

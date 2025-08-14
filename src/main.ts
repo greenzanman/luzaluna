@@ -28,7 +28,7 @@ export const HEART_BORDER_THICKNESS = 4
 
 export const WASP_SPEED = 4000
 
-export const INVUL_DURATION = 10
+export const INVUL_DURATION = 2
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
@@ -53,4 +53,4 @@ mountMenuScene();
 mountGameScene();
 mountLossScene();
 
-go("menu");
+go("menu", 0, 0);

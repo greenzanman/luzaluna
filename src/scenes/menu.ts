@@ -1,7 +1,7 @@
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("menu", () => {
+    scene("menu", (bestTime, bestBumps) => {
         add([
             text("TUMBLEBEE"),
             pos(textPos),
@@ -26,6 +26,6 @@ export function mountMenuScene() {
             color(WHITE)
         ])
 
-        startBtn.onClick(() => go("game"));
+        startBtn.onClick(() => go("game", bestTime, bestBumps));
     })
 }
