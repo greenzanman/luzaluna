@@ -1,5 +1,5 @@
 import type { Comp, GameObj, Vec2 } from "kaplay";
-import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR} from "../main"
+import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} from "../main"
 
 
 // Player Object
@@ -56,6 +56,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             this.move(this.velocity.scale(dt()));
         
             this.invulTimer = Math.max(0, this.invulTimer - dt());
+            debug.log("Invul TIMER", this.invulTimer)
             this.rotateBy(this.angVelocity * dt())
         },
         setVelocity(newVelocity: Vec2) {
@@ -115,7 +116,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             {
                 this.hurt(damage);
                 shake(6 * damage);
-                this.invulTimer = 0.25;
+                this.invulTimer = INVUL_DURATION;
             }
         }
     }

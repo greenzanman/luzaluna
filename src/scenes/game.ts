@@ -68,9 +68,8 @@ export function mountGameScene() {
 
         // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
-0
         // Create hearts
-        for (let i = 0, j = 0; i < SCREEN_WIDTH - PADDING_HORIZ && j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
+        for (let i = 0, j = 0; j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
         }
 
@@ -88,6 +87,8 @@ export function mountGameScene() {
             // Emit particles
             debug.log("Emitting particles (unimplemented");
             player.emitParticles(10)
+
+            debug.log(player.hp())
 
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());

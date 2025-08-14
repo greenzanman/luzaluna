@@ -22,11 +22,13 @@ export const POLLEN_PUSH = 300
 export const POLLEN_CAPACITY = 30
 export const POLLEN_RECHARGE_RATE = 6
 
-export const HEALTH_CAPACITY = 100
+export const HEALTH_CAPACITY = 4
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
 
 export const WASP_SPEED = 4000
+
+export const INVUL_DURATION = 10
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
