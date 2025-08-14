@@ -34,6 +34,6 @@ export function createBumpCount(xPos: number, yPos: number, txt: string): GameOb
         color(BLACK),
         scale(.5),
         bumpCountComp(),
-        "pollenCount"
+        "bumpCount"
     ]);
 }

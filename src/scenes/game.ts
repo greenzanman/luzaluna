@@ -14,7 +14,7 @@ import {
     HEART_SPACING,
     HEALTH_CAPACITY
 } from "../main"
-import {createPlayer} from "../game_objects/player"
+import {createArrow, createPlayer} from "../game_objects/player"
 import {createFlower} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createHexBorder} from "../game_objects/hexBorder"
@@ -35,6 +35,7 @@ export function mountGameScene() {
     scene("game", () => {
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        const arrow = createArrow(player)
         let mousePressed = false
 
         const rect = canvas.getBoundingClientRect();
@@ -42,7 +43,6 @@ export function mountGameScene() {
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
         const borderPos = vec2(rect.width / 2 - borderWidth / 2, rect.height / 2 - borderHeight / 2)
         const center = vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-        console.log(rect, borderPos)
         const hex = createHexBorder(borderPos, borderWidth, borderHeight, BORDER_THICKNESS)
 
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
@@ -85,9 +85,15 @@ export function mountGameScene() {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
 
+            // Emit particles
+            debug.log("Emitting particles (unimplemented");
+            player.emitParticles(10)
+
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
             }
+
+            
         })
 
         let waspPatience = 2
@@ -97,7 +103,7 @@ export function mountGameScene() {
             {
                 waspPatience += 5
                 let spawnLoc = vec2(0, 0)
-                let type = 4// Math.floor(rand(5))
+                let type =  Math.floor(rand(5))
                 if (type == 4)
                 {
                     waspPatience += 1000
@@ -138,7 +144,9 @@ export function mountGameScene() {
             {
                 if (ammoCount.GetAmmo() >= 1)
                 {
-                let dir = mousePos().sub(player.worldPos()).unit()
+                //let dir = mousePos().sub(player.worldPos()).unit()
+                
+                let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
                 ammoCount.DecreaseAmmo(1)
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))

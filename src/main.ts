@@ -15,6 +15,7 @@ export const BORDER_THICKNESS = 16
 export const FLOWER_SPACING = 25
 export const GRAVITY = 10000
 export const BUMP_SPEED = 12000
+export const ROTATION_FACTOR = 500
 export const POLLEN_SPEED = 30000
 export const POLLEN_PUSH = 300
 

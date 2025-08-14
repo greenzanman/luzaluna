@@ -25,10 +25,10 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
         vec2(x/Math.SQRT2, 0)
     ]
     return add([
-    hexBorderComp(),
-    pos(position),
-    polygon(points2, {fill: false}),
-    outline(out),
-    color(RED)
+        hexBorderComp(),
+        pos(position),
+        polygon(points2, {fill: false}),
+        outline(out),
+        color(RED)
     ])
 } 

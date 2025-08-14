@@ -60,6 +60,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         flower.trigger("bump");
     
         player.bump(flower.worldPos(), flowerDirection);
+        player.spin(rand(-1, 1))
 
     })
 }
