@@ -49,10 +49,21 @@ export function mountGameScene() {
 
         //For each segment interpolate the flowers along the segment.
         segments.forEach(([start, end], i) => {
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+
+            // Normal vector: rotate direction vector 90 degrees
+            const nx = -dy;
+            const ny = dx;
+            debug.log("Bruh:", nx, ny)
+            // Angle of the normal vector (in radians)
+            const angle = rad2deg(Math.atan2(ny, nx));
+
             const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
                 const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
-                createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex);
+                debug.log(angle)
+                createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex, angle - 90);
             });
         });
 

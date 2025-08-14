@@ -135,17 +135,20 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
 }
 
 export function createPlayer(x: number, y: number) {
+    loadSprite("bee", "BEE.png");
     const player = add([
         playerComp(vec2(0, -5000), 300),
         health(HEALTH_CAPACITY),
-        area(),
-        rect(30, 30),
+        area({scale: .65}),
+        //rect(30, 30),
         timer(),
         rotate(),
         opacity(),
         anchor("center"),
         pos(x, y),
-        color(0.5, 0.5, 1),
+        sprite("bee"),
+        scale(.5),
+        //color(0.5, 0.5, 1),
         "player"
     ]);
     return player

@@ -28,7 +28,8 @@ function flowerComp(): FlowerComp {
         },
         draw() {0
             if (this.flowerState > 0) {
-                drawCircle({pos: vec2(0, 0), radius: Math.min(20, this.flowerState * 10)})
+                const scal = Math.min(100, this.flowerState * 50)
+                drawSprite({sprite: "flower", anchor: "center", width: scal, height: scal})
                 //this.scale = this.flowerState > 0 ? 2 : 1;
             }
         }
@@ -36,13 +37,17 @@ function flowerComp(): FlowerComp {
 }
 
 export function createFlower(position: Vec2, flowerDirection: Vec2, player: GameObj<PlayerComp>,
-    border: GameObj
+    border: GameObj, rotation: number
 ) {
+    loadSprite("bud", "BUD.png");
+    loadSprite("flower", "FLOWER.png");
     let flower = border.add([
-        rect(20, 20),
         area(),
+        scale(.5),
+        sprite("bud"),
         anchor("center"),
         pos(position),
+        rotate(rotation),
         flowerComp(),
         "flower"
     ]);

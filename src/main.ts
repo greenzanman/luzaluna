@@ -12,7 +12,7 @@ export const PADDING_VERT = 60
 export const PADDING_HORIZ = 20
 export const BORDER_THICKNESS = 16
 
-export const FLOWER_SPACING = 25
+export const FLOWER_SPACING = 5
 export const GRAVITY = 10000
 export const BUMP_SPEED = 12000
 export const ROTATION_FACTOR = 500

@@ -1,13 +1,12 @@
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../main";
+
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
     scene("menu", (bestTime, bestBumps) => {
+        loadSprite("title", "title.png")
         add([
-            text("TUMBLEBEE"),
-            pos(textPos),
-            scale(2),
-            anchor("center"),
-            color(BLACK)
+            sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
         ]);
 
         const startBtn = add([
