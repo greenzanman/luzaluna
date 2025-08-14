@@ -56,7 +56,6 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             this.move(this.velocity.scale(dt()));
         
             this.invulTimer = Math.max(0, this.invulTimer - dt());
-            debug.log("Invul TIMER", this.invulTimer)
             this.rotateBy(this.angVelocity * dt())
         },
         setVelocity(newVelocity: Vec2) {
@@ -118,6 +117,19 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
                 shake(6 * damage);
                 this.invulTimer = INVUL_DURATION;
             }
+        },
+        draw()
+        {
+            if (this.invulTimer != 0)
+            {
+                this.playerState++
+                if(this.playerState == 20) {
+                    this.opacity = this.opacity == 1? 0.25 : 1
+                    this.playerState = 0
+                }
+            } else {
+                this.opacity = 1
+            }
         }
     }
 }
@@ -130,6 +142,7 @@ export function createPlayer(x: number, y: number) {
         rect(30, 30),
         timer(),
         rotate(),
+        opacity(),
         anchor("center"),
         pos(x, y),
         color(0.5, 0.5, 1),
