@@ -96,15 +96,15 @@ export function mountGameScene() {
             
         })
 
-        let waspPatience = 2
+        let waspPatience = 0
         function CreateEnemies() {
             waspPatience -= dt()
             if (waspPatience < 0)
             {
                 waspPatience += 5
                 let spawnLoc = vec2(0, 0)
-                let type =  Math.floor(rand(5))
-                if (type == 4)
+                let type = Math.floor(rand(5))
+                if (type == 4) // TODO: improve spawning
                 {
                     waspPatience += 1000
                     createBigWasp(spawnLoc, player,

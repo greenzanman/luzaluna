@@ -4,6 +4,10 @@ import { PlayerComp } from "./player";
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 100;
 const WASP_HEALTH = 100;
+const WASP_ROTATE_SPEED = 100;
+const WASP_SIDE_ROT = 20;
+const WASP_DASH_DISTANCE = 150;
+const WASP_HEIGHT_VARIANCE = 100;
 // Wasp Object
 
 export interface BigWaspComp extends Comp {
@@ -59,7 +63,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     this.state = Math.floor(rand(1, 3))
                     break;
                 case 1:
-                    this.state = 2
+                    this.state = 2 // Side to side always goes into charge
                     break;
                 case 2: // Charging charge always goes into charge
                     this.state = 3
@@ -68,6 +72,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                 case 3: // 75/25 for doing a nother charge
                     let randVal = Math.floor(rand(4))
                     this.state = randVal == 0 ? 0 : 2
+                    break;
             }
             // Making decisions mased on that
             switch (this.state)
@@ -81,15 +86,17 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     this.moving = true;
                     let randVal = Math.floor(rand(2))
                     this.mode = 2 + randVal;
-                    this.moveTarget = this.center.add(vec2((1 - 2 * randVal) * newDimensions.x / 2, 0));
+                    this.moveTarget = this.center.add(vec2((1 - 2 * randVal) * newDimensions.x / 2, rand(-WASP_HEIGHT_VARIANCE, WASP_HEIGHT_VARIANCE)));
                     return PATIENCE_VAL * 2;
                 case 2:
                     this.moving = false;
-                    return PATIENCE_VAL / 2;
+                    this.mode = 4;
+                    return PATIENCE_VAL / 2
                 case 3:
                     this.moving = true;
-                    this.moveTarget = this.target.worldPos().add(
-                    this.target.worldPos().sub(this.worldPos()).unit().scale(150))
+                    this.mode = 5;
+                    this.moveTarget =  this.target.worldPos().add(
+                    this.target.worldPos().sub(this.worldPos()).unit().scale(WASP_DASH_DISTANCE))
                     return PATIENCE_VAL; // Done through updateMode
             }
             return PATIENCE_VAL
@@ -101,33 +108,52 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                 case 0: // Reached center, meaning stop
                     this.moving = false;
                     this.mode = 0;
+                    break;
                 case 1: // Switch to other side
                     if (this.mode == 2)
                     {
                         this.mode = 3;
-                        this.moveTarget = this.center.sub(vec2(newDimensions.x / 2, 0));
+                        this.moveTarget = this.center.sub(vec2(newDimensions.x / 2, rand(-WASP_HEIGHT_VARIANCE, WASP_HEIGHT_VARIANCE)));
                     }
                     else
                     {
                         this.mode = 2;
-                        this.moveTarget = this.center.add(vec2(newDimensions.x / 2, 0));
+                        this.moveTarget = this.center.add(vec2(newDimensions.x / 2, rand(-WASP_HEIGHT_VARIANCE, WASP_HEIGHT_VARIANCE)));
                     }
+                    break;
                 case 2:
                     return;
                 case 3:
-                    this.updateState();
+                    this.patience = this.updateState();
+                    break;
             }
         },
         performActions (deltaTime: number)
         {
-                let speed = WASP_MOVE_SPEED * deltaTime
+            let speed = WASP_MOVE_SPEED * deltaTime
             switch (this.state)
             {
+                case 1:
+                    speed *= 2
+                    break;
                 case 2:
                     this.angle += dt() * 120
+                    break;
                 case 3:
                     speed *= 3
+                    break;
             }
+            
+            switch (this.mode)
+            {
+                case 2: 
+                    this.angle = Math.min(this.angle + dt() * WASP_ROTATE_SPEED, WASP_SIDE_ROT)
+                    break;
+                case 3:
+                    this.angle = Math.max(this.angle - dt() * WASP_ROTATE_SPEED, -WASP_SIDE_ROT)
+                    break;
+            }
+            
             if (this.moving)
             {
                 let dist = this.moveTarget.sub(this.worldPos());
