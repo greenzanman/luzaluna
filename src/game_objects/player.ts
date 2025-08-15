@@ -80,26 +80,26 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         emitParticles(numParticles: number)
         {
             // // TODO: Find out if particle emitter is being properly destroyed
-            // let loadedSpriteData = getSprite("bean").data;
+            let loadedSpriteData = getSprite("bean").data;
             // console.log(loadedSpriteData)
-            // let particleEmitter = add([
-            //     pos(this.worldPos()),
-            //     timer(),
-            //     particles({
-            //         max: numParticles,
-            //         speed: [75, 500],
-            //         lifeTime: [0.75,1.0],
-            //         angle: [0, 360],
-            //         opacities: [1.0, 0.0],
-            //         texture: loadedSpriteData.tex, // texture of the sprite
-            //         quads: loadedSpriteData.frames, // to tell whe emitter what frames of the sprite to use
-            //     }, {
-            //         direction: 0,
-            //         spread: 360,
-            //         lifetime: 1.0,
-            //     }),
-            // ])
-            // particleEmitter.emit(numParticles);
+            let particleEmitter = add([
+                 pos(this.worldPos()),
+                 timer(),
+                particles({
+                    max: numParticles,
+                     speed: [75, 500],
+                     lifeTime: [0.75,1.0],
+                     angle: [0, 360],
+                     opacities: [1.0, 0.0],
+                     texture: loadedSpriteData.tex, // texture of the sprite
+                     quads: loadedSpriteData.frames, // to tell whe emitter what frames of the sprite to use
+                 }, {
+                     direction: 0,
+                     spread: 360,
+                     lifetime: 1.0,
+                 }),
+             ])
+            particleEmitter.emit(numParticles);
         },
         setPlayerState(state: number)
         {
@@ -135,6 +135,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
 }
 
 export function createPlayer(x: number, y: number) {
+    loadSprite("bean", "icon.png");
     loadSprite("bee", "BEE.png");
     const player = add([
         playerComp(vec2(0, -5000), 300),
