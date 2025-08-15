@@ -53,10 +53,9 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         invulTimer: 0,
         update() {
             this.velocity.y += GRAVITY * dt();
-            this.move(this.velocity.scale(dt()));
+            this.moveBy(this.velocity.scale(dt()));
         
             this.invulTimer = Math.max(0, this.invulTimer - dt());
-            debug.log("Invul TIMER", this.invulTimer)
             this.rotateBy(this.angVelocity * dt())
         },
         setVelocity(newVelocity: Vec2) {

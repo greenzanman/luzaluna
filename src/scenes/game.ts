@@ -133,6 +133,12 @@ export function mountGameScene() {
             }
         }
     
+        let pollenDelay = 0
+        const POLLEN_DELAY = 0.05
+        let inaccuracy = 0
+        const INACCURACY_FLOOR = 0.5
+        const INACCURACY_COEF = 100
+
         // Tick function
         onUpdate(() => {
             // QOL click and hold
@@ -141,21 +147,31 @@ export function mountGameScene() {
                 mousePressed = true
             }
             // Shooting pollen
+            pollenDelay = Math.max(pollenDelay - dt(), 0);
             if (isMouseDown() && mousePressed)
             {
                 if (ammoCount.GetAmmo() >= 1)
                 {
-                //let dir = mousePos().sub(player.worldPos()).unit()
-                
-                let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
-                ammoCount.DecreaseAmmo(1)
-                createPollen(player.worldPos(), dir)
-                player.push(dir.scale(-POLLEN_PUSH))
+                    if (pollenDelay == 0) {
+                    //let dir = mousePos().sub(player.worldPos()).unit()
+                        pollenDelay = POLLEN_DELAY
+                        let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
+                        ammoCount.DecreaseAmmo(1)
+                        let inaccuracyVal = Math.max(inaccuracy - INACCURACY_FLOOR, 0) * INACCURACY_COEF
+                        let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
+                        createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
+                        player.push(dir.scale(-POLLEN_PUSH))
+                    }
                 }
                 else // Force release and reclick once out of pollen
                 {
                     mousePressed = false
                 }
+                inaccuracy += dt()
+            }
+            else
+            {
+                inaccuracy = 0
             }
 
             CreateEnemies()

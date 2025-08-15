@@ -2,29 +2,27 @@ import type { Comp, Vec2} from "kaplay";
 import {POLLEN_SPEED} from "../main"
 
 interface PollenComp extends Comp {
-    xVel: number,
-    yVel: number
+    velocity: Vec2
 }
 
-function pollenComp(xVel: number, yVel: number): PollenComp {
+function pollenComp(newVelocity: Vec2): PollenComp {
     return {
         id: "pollenComp",
         require: ["pos"],
-        xVel: xVel,
-        yVel: yVel,
+        velocity: newVelocity,
         update() {
-            this.move(xVel * dt(), yVel * dt())
+            this.moveBy(this.velocity.scale(dt()))
         }
     };
 }
 
-export function createPollen(position: Vec2, dir: Vec2) {
+export function createPollen(position: Vec2, vel: Vec2) {
     let pollen = add([
         rect(6, 6),
         area(),
         anchor("center"),
         pos(position.x, position.y),
-        pollenComp(dir.x * POLLEN_SPEED, dir.y * POLLEN_SPEED),
+        pollenComp(vel),
         "pollen"
     ]);
 
