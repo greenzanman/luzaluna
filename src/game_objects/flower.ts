@@ -41,12 +41,13 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
 ) {
     loadSprite("bud", "BUD.png");
     loadSprite("flower", "FLOWER.png");
-    let flower = border.add([
+    
+    let flower = add([
         area(),
         scale(.5),
         sprite("bud"),
         anchor("center"),
-        pos(position),
+        pos(border.toWorld(position)),
         rotate(rotation),
         flowerComp(),
         "flower"

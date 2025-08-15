@@ -24,6 +24,7 @@ export function createArrow(player: GameObj): GameObj{
         color(RED),
         "arrow"
     ]);
+    
 
     return arrow
 }
