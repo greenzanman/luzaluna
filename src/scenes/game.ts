@@ -15,6 +15,7 @@ import {
     HEALTH_CAPACITY
 } from "../main"
 import {createArrow, createPlayer} from "../game_objects/player"
+import { ArcFlightComp } from "../game_objects/arcFlight"
 import {createFlower, FlowerComp} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createHexBorder} from "../game_objects/hexBorder"
@@ -37,6 +38,7 @@ export function mountGameScene() {
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         const arrow = createArrow(player)
+        const arcFlight = ArcFlightComp(player);
         let mousePressed = false
 
         const rect = canvas.getBoundingClientRect();
@@ -90,7 +92,7 @@ export function mountGameScene() {
             debug.log("Emitting particles (unimplemented");
             player.emitParticles(10)
 
-            debug.log(player.hp())
+            debug.log("HP: " + player.hp())
 
             if(player.hp() <= 0) {
                 go("loss", customTimer.getTime(), bumpCount.getBumps());
@@ -147,13 +149,23 @@ export function mountGameScene() {
         }
 
         let pollenDelay = 0
-        const POLLEN_DELAY = 0.05
-        let inaccuracy = 0
+        let shootingDuration = 0
         const INACCURACY_FLOOR = 0.5
-        const INACCURACY_COEF = 100
+        const INACCURACY_COEF = 1
+        const INACCURACY_MAX = 0.8
+
+        // Shared aim direction
+        let aimDirection = vec2(0, 0);
 
         // Tick function
         onUpdate(() => {
+            
+            // Calculate target direction
+            const rawTargetDirection = mousePos().sub(player.worldPos()).scale(1).unit();
+            // Lerp factor: higher = faster snap, lower = smoother
+            const lerpAimFactor = 0.15;
+            let playerShot = false;
+
             // QOL click and hold
             if (isMousePressed())
             {
@@ -166,30 +178,55 @@ export function mountGameScene() {
                 if (ammoCount.GetAmmo() >= 1)
                 {
                     if (pollenDelay == 0) {
-                    //let dir = mousePos().sub(player.worldPos()).unit()
-                        pollenDelay = POLLEN_DELAY
-                        let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
-                        ammoCount.DecreaseAmmo(1)
-                        let inaccuracyVal = Math.max(inaccuracy - INACCURACY_FLOOR, 0) * INACCURACY_COEF
+                        // Calculate dynamic delay based on ammo
+                        const minDelay = 0.1; // Fastest fire rate
+                        const maxDelay = 0.8; // Slowest fire rate
+                        const ammo = ammoCount.GetAmmo();
+                        const ammoRatio = ammo / POLLEN_CAPACITY;
+                        const delay = lerp(maxDelay, minDelay, Math.sqrt(ammoRatio ** 0.01));
+                        pollenDelay = delay; // slower firing rate when low on ammo
+
+
+                        ammoCount.DecreaseAmmo(1*shootingDuration)  // use more ammo the longer u held down
+
+                        let inaccuracyVal = Math.min(shootingDuration, INACCURACY_MAX);
+                        inaccuracyVal = Math.max(inaccuracyVal - INACCURACY_FLOOR, 0) * INACCURACY_COEF
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
-                        createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
-                        player.push(dir.scale(-POLLEN_PUSH))
+
+                        aimDirection = rawTargetDirection.add(inaccuracyOffset);
+                        createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED))
+
+
+                        const minPush = POLLEN_PUSH;      // normal push at full ammo
+                        const maxPush = POLLEN_PUSH ** 2;  // stronger push at zero ammo
+                        const pushStrength = lerp(minPush, maxPush, 1 - ammoRatio);
+                        player.push(aimDirection.scale(-pushStrength))
+
+                        playerShot = true;
                     }
                 }
                 else // Force release and reclick once out of pollen
                 {
                     mousePressed = false
+                    pollenDelay = 5
                 }
-                inaccuracy += dt()
+                shootingDuration += dt()
             }
             else
             {
-                inaccuracy = 0
+                shootingDuration = 0   
             }
+
+            // If player not shooting, smoothly snap aim direction to target
+            if (playerShot == false)
+                    aimDirection = aimDirection.lerp(rawTargetDirection, lerpAimFactor).unit();
 
             CreateEnemies()
 
         });
+
+        // Pass aimDirection to arrowComp
+        arrow.aimDirection = () => aimDirection;
     });
 }
 
