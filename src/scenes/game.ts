@@ -223,6 +223,8 @@ export function mountGameScene() {
 
             CreateEnemies()
 
+            arcFlight.applyArcFlight(player);
+
         });
 
         // Pass aimDirection to arrowComp
