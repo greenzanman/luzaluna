@@ -15,7 +15,7 @@ import {
     HEALTH_CAPACITY
 } from "../main"
 import {createArrow, createPlayer} from "../game_objects/player"
-import {createFlower} from "../game_objects/flower"
+import {createFlower, FlowerComp} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createHexBorder} from "../game_objects/hexBorder"
 
@@ -30,6 +30,7 @@ import {createBumpCount} from "../game_objects/bumpCount"
 import { createWasp } from "../game_objects/wasp"
 import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
+import { GameObj } from "kaplay"
 
 export function mountGameScene() {
     scene("game", () => {
@@ -48,11 +49,12 @@ export function mountGameScene() {
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         //For each segment interpolate the flowers along the segment.
+        const flowers: GameObj<FlowerComp>[] = [];
         segments.forEach(([start, end], i) => {
             const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
                 const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
-                createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex);
+                flowers.push(createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex));
             });
         });
 
@@ -97,17 +99,16 @@ export function mountGameScene() {
             
         })
 
-        let waspPatience = 0
+        let waspPatience = 5
         function CreateEnemies() {
             waspPatience -= dt()
             if (waspPatience < 0)
             {
-                waspPatience += 5
-                let spawnLoc = vec2(0, 0)
-                let type = Math.floor(rand(5))
+                let spawnLoc = vec2(SCREEN_WIDTH / 2, - 50)
+                let type = Math.floor(rand(9) / 2)
                 if (type == 4) // TODO: improve spawning
                 {
-                    waspPatience += 1000
+                    waspPatience += 30
                     createBigWasp(spawnLoc, player,
                         center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT)
                     );
@@ -116,23 +117,35 @@ export function mountGameScene() {
                     switch (type)
                     {
                         case 0:
-                            spawnLoc = vec2(0, 0)
+                            spawnLoc = vec2(0, rand(SCREEN_HEIGHT))
                             break;
                         case 1:
-                            spawnLoc = vec2(SCREEN_WIDTH, 0)
+                            spawnLoc = vec2(SCREEN_WIDTH, rand(SCREEN_HEIGHT))
                             break;
                         case 2:
-                            spawnLoc = vec2(SCREEN_HEIGHT, SCREEN_HEIGHT)
+                            spawnLoc = vec2(rand(SCREEN_WIDTH), SCREEN_HEIGHT)
                             break;
                         case 3:
-                            spawnLoc = vec2(0, SCREEN_HEIGHT)
+                            spawnLoc = vec2(rand(SCREEN_WIDTH), SCREEN_HEIGHT)
                             break;
                     }
+                    waspPatience += rand(1, 3)
                     createWasp(spawnLoc, player)
                 }
             }
         }
     
+        let flowerPatience = 10
+        function createFlowers() {
+            flowerPatience -= dt()
+            if (flowerPatience < 0)
+            {
+                let gottenFlower = flowers[Math.floor(rand(flowers.length))]
+                gottenFlower.evolve();
+                flowerPatience += rand(6, 14)
+            }
+        }
+
         let pollenDelay = 0
         const POLLEN_DELAY = 0.05
         let inaccuracy = 0
@@ -175,20 +188,6 @@ export function mountGameScene() {
             }
 
             CreateEnemies()
-
-            // Loss condition
-            // let intersections = 0;
-            // outerSegments.forEach(([start, end], i) => {
-            //     intersections += rightCrosses(player.worldPos(), start, end)
-            // });
-            // console.log(intersections)
-            // if (intersections % 2 == 0)
-            // {                
-            //     player.takedamage(1)
-            //     player.worldPos(center)
-            //     player.setVelocity(vec2(0, -1000))
-            // }
-
 
         });
     });

@@ -123,7 +123,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
 
 export function createPlayer(x: number, y: number) {
     const player = add([
-        playerComp(vec2(0, -5000), 300),
+        playerComp(vec2(0, -50), 300),
         health(HEALTH_CAPACITY),
         area(),
         rect(30, 30),

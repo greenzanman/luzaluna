@@ -3,7 +3,7 @@ import { PlayerComp } from "./player";
 
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 100;
-const WASP_HEALTH = 100;
+const WASP_HEALTH = 40;
 const WASP_ROTATE_SPEED = 100;
 const WASP_SIDE_ROT = 20;
 const WASP_DASH_DISTANCE = 150;

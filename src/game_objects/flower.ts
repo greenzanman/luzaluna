@@ -5,16 +5,21 @@ import {PlayerComp} from "./player"
 
 // Flower object
 
-interface FlowerComp extends Comp {
+export interface FlowerComp extends Comp {
     flowerState: number;
+    evolveTimer: number;
+    evolveState: number;
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
+    evolve: () => void;
 }
 
 function flowerComp(): FlowerComp {
     return {
         id: "flowerComp",
         flowerState: 0,
+        evolveState: 0,
+        evolveTimer: 0,
         require: ["pos"],
         getFlowerState(): number {
             return this.flowerState;
@@ -22,9 +27,27 @@ function flowerComp(): FlowerComp {
         setFlowerState(newState: number) {
             this.flowerState = newState
         },
+        evolve() {
+            this.evolveState = 1;
+            this.evolveTimer = 5;
+            // DECIDE ON EVOLVE STATES HERE
+        },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
             this.area.scale = this.flowerState > 0 ? 2 : 1;
+
+            if (this.evolveState != 0)
+            {
+                this.evolveTimer = Math.max(0, this.evolveTimer - dt())
+                if (this.evolveTimer <= 0)
+                {
+                    this.evolveState = 0
+                }
+                switch (this.evolveState)
+                {
+                    // DO EVOLVE STUFF HERE
+                }
+            }
         },
         draw() {0
             if (this.flowerState > 0) {
@@ -63,4 +86,5 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         player.spin(rand(-1, 1))
 
     })
+    return flower
 }
