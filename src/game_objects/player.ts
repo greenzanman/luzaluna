@@ -151,6 +151,7 @@ export function createPlayer(x: number, y: number) {
         sprite("bee"),
         scale(.5),
         //color(0.5, 0.5, 1),
+        z(2),
         "player"
     ]);
     return player
