@@ -77,7 +77,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
     flower.onCollide("player", () => {
         if (flower.getFlowerState() == 0)
         {
-            player.takedamage(1)
+            // player.takedamage(1)
         }
         // Dispatch bump event in order to regen pollen.
         flower.trigger("bump");
