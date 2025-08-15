@@ -1,6 +1,5 @@
 import type { Comp, GameObj, Vec2 } from "kaplay";
 import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} from "../main"
-import { ArcFlightComp } from "./arcFlight";
 
 const MAX_PLAYER_SPEED = 800; 
 
@@ -45,7 +44,6 @@ export interface PlayerComp extends Comp {
     emitParticles: (numParticles: number) => void;
     setPlayerState: (state: number) => void;
     getPlayerState: () => number;
-    // applyArcFlight: () => void;
 }
 
 function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
@@ -71,9 +69,6 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         setVelocity(newVelocity: Vec2) {
             this.velocity = newVelocity  
         },
-        // applyArcFlight() {
-        //     this.ArcFlight?.applyArcFlight();
-        // },
         bump(cause: Vec2, direction: Vec2) {
             let offset = this.worldPos().sub(cause).unit();
             //this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
