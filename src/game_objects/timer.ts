@@ -25,7 +25,7 @@ export function createCustomTimer(xPos: number, yPos: number, txt: string, start
     return add([
         pos(xPos, yPos),
         text(txt),
-        color(BLACK),
+        color(220, 202, 105),
         scale(.5),
         customTimerComp(start_time),
         "customTimer"

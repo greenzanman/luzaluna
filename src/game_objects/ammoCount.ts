@@ -32,7 +32,7 @@ function pollenAmmoComp(width: number, height: number): PollenAmmoComp {
             draw() 
             {
                 drawRect({width: this.width * this.AmmoCount / POLLEN_CAPACITY, height: this.height,
-                    pos: vec2(0, 0), color: Color.BLACK
+                    pos: vec2(0, 0), color: color(220, 202, 105).color
                 })
             },
             update()

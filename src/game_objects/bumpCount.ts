@@ -31,7 +31,7 @@ export function createBumpCount(xPos: number, yPos: number, txt: string): GameOb
     return add([
         pos(xPos, yPos),
         text(txt),
-        color(BLACK),
+        color(220, 202, 105),
         scale(.5),
         bumpCountComp(),
         "bumpCount"

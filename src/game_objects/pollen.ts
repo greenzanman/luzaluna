@@ -24,6 +24,7 @@ export function createPollen(position: Vec2, dir: Vec2) {
         area(),
         anchor("center"),
         pos(position.x, position.y),
+        color(220, 202, 105),
         pollenComp(dir.x * POLLEN_SPEED, dir.y * POLLEN_SPEED),
         "pollen"
     ]);

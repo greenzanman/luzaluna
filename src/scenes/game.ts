@@ -72,14 +72,12 @@ export function mountGameScene() {
             // Normal vector: rotate direction vector 90 degrees
             const nx = -dy;
             const ny = dx;
-            debug.log("Bruh:", nx, ny)
             // Angle of the normal vector (in radians)
             const angle = rad2deg(Math.atan2(ny, nx));
 
             const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
                 const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
-                debug.log(angle)
                 createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex, angle - 90);
             });
         });
@@ -98,7 +96,7 @@ export function mountGameScene() {
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
         // Create hearts
         for (let i = 0, j = 0; j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
-            createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
+            createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
         // Bump event listener
@@ -175,10 +173,6 @@ export function mountGameScene() {
     
         // Tick function
         onUpdate(() => {
-            debug.log("KILLS:",stats.wasp_kills, 
-                "BIG KILLS:", stats.bigWasp_kills, 
-                "Pollen fired:", stats.pollen_fired, 
-                "Flower Blooms:", stats.flower_blooms)
             // QOL click and hold
             if (isMousePressed())
             {

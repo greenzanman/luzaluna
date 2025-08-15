@@ -20,7 +20,7 @@ function heartComp(): HeartComp {
             },
             draw() {
                 if(!this.heartState) {
-                    drawCircle({pos: vec2(0, 0), radius: 20})
+                    drawCircle({pos: vec2(0, 0), radius: 20, color: color(75, 75, 75).color})
                 }
             }
         }
@@ -33,7 +33,7 @@ export function createHeart(xPos: number, yPos: number, out: number, out_color: 
         pos(xPos, yPos),
         heartComp(),
         outline(out, out_color),
-        color(RED),
+        color(220, 202, 105),
         "heart"
     ]);
 }

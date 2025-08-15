@@ -10,7 +10,7 @@ export const SCREEN_HEIGHT = 600
 
 export const PADDING_VERT = 60
 export const PADDING_HORIZ = 20
-export const BORDER_THICKNESS = 16
+export const BORDER_THICKNESS = 1
 
 export const FLOWER_SPACING = 10
 export const GRAVITY = 10000

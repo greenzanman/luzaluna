@@ -21,7 +21,7 @@ export function createArrow(player: GameObj): GameObj{
         area(),
         rect(5, 60),
         pos(player.worldPos()),
-        color(RED),
+        color(220, 202, 105),
         "arrow"
     ]);
     
