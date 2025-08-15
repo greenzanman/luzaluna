@@ -20,6 +20,9 @@ function flowerComp(): FlowerComp {
             return this.flowerState;
         },
         setFlowerState(newState: number) {
+            if (this.flowerState == 0) {
+                this.trigger("bloom")
+            }
             this.flowerState = newState
         },
         update() {

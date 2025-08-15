@@ -31,8 +31,25 @@ import { createWasp } from "../game_objects/wasp"
 import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
 
+export type Stats = {
+    time: number,
+    bumps: number,
+    wasp_kills: number,
+    bigWasp_kills: number,
+    pollen_fired: number,
+    flower_blooms: number
+}
+
 export function mountGameScene() {
-    scene("game", (bestTime, bestBumps) => {
+    scene("game", (bestTime: number, bestBumps: number) => {
+        let stats: Stats = {
+            time: null,
+            bumps: null,
+            wasp_kills: 0, 
+            bigWasp_kills: 0,
+            pollen_fired: 0,
+            flower_blooms: 0
+        }
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         const arrow = createArrow(player)
@@ -90,6 +107,19 @@ export function mountGameScene() {
             bumpCount.increaseBumps();
         })
 
+        on("death", "wasp", () => {
+            stats.wasp_kills++
+        })
+
+        on("death", "bigWasp", () => {
+            stats.bigWasp_kills++
+        })
+
+        on("bloom", "flower", () => {
+            stats.flower_blooms++
+        })
+
+
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
@@ -101,7 +131,9 @@ export function mountGameScene() {
             debug.log(player.hp())
 
             if(player.hp() <= 0) {
-                go("loss", customTimer.getTime(), bumpCount.getBumps(), bestTime, bestBumps);
+                stats.time = customTimer.getTime()
+                stats.bumps = bumpCount.getBumps()
+                go("loss", stats, bestTime, bestBumps);
             }
 
             
@@ -118,9 +150,7 @@ export function mountGameScene() {
                 if (type == 4) // TODO: improve spawning
                 {
                     waspPatience += 1000
-                    createBigWasp(spawnLoc, player,
-                        center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT)
-                    );
+                    createBigWasp(spawnLoc, player,center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT), stats);
                 }
                 else {
                     switch (type)
@@ -138,13 +168,17 @@ export function mountGameScene() {
                             spawnLoc = vec2(0, SCREEN_HEIGHT)
                             break;
                     }
-                    createWasp(spawnLoc, player)
+                    createWasp(spawnLoc, player, stats)
                 }
             }
         }
     
         // Tick function
         onUpdate(() => {
+            debug.log("KILLS:",stats.wasp_kills, 
+                "BIG KILLS:", stats.bigWasp_kills, 
+                "Pollen fired:", stats.pollen_fired, 
+                "Flower Blooms:", stats.flower_blooms)
             // QOL click and hold
             if (isMousePressed())
             {
@@ -161,6 +195,8 @@ export function mountGameScene() {
                 ammoCount.DecreaseAmmo(1)
                 createPollen(player.worldPos(), dir)
                 player.push(dir.scale(-POLLEN_PUSH))
+
+                stats.pollen_fired++
                 }
                 else // Force release and reclick once out of pollen
                 {

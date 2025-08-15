@@ -3,7 +3,7 @@ import { PlayerComp } from "./player";
 
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 100;
-const WASP_HEALTH = 100;
+const WASP_HEALTH = 1;
 const WASP_ROTATE_SPEED = 100;
 const WASP_SIDE_ROT = 20;
 const WASP_DASH_DISTANCE = 150;
@@ -176,13 +176,14 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
             if (this.health <= 0)
             {
                 this.destroy()
+                this.trigger("death")
             }
         }
     }
 }
 
 export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>,
-        center: Vec2, dimensions: Vec2
+        center: Vec2, dimensions: Vec2, stats: Object
 ) {
     let wasp =  add([
         pos(position),

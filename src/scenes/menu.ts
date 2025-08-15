@@ -3,7 +3,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../main";
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("menu", (bestTime, bestBumps) => {
+    scene("menu", (bestTime: number, bestBumps: number) => {
         loadSprite("title", "title.png")
         add([
             sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
