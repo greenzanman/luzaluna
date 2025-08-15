@@ -60,7 +60,7 @@ export function ArcFlightComp(player: GameObj): ArcFlightComp {
 
             // --- 2. Build or decay arcCharge based on turning ---
             if (smoothedTurn > MIN_CURVE_SWEETSPOT && smoothedTurn < MAX_CURVE_SWEETSPOT) {
-                debug.log(`[ArcFlight] Building arcCharge: smoothedTurn=${smoothedTurn.toFixed(2)}`);
+                // debug.log(`[ArcFlight] Building arcCharge: smoothedTurn=${smoothedTurn.toFixed(2)}`);
                 arcCharge += CURVE_BUILD_RATE * dt();
             } else {
                 // debug.log(`[ArcFlight] Decaying arcCharge: smoothedTurn=${smoothedTurn.toFixed(2)}`);
@@ -75,7 +75,7 @@ export function ArcFlightComp(player: GameObj): ArcFlightComp {
 
             // --- 4. Release boost if curve is exited or charge is high ---
             if (curveExited || arcCharge >= BOOST_CHARGE_THRESHOLD) {
-                debug.log(`[ArcFlight] Boost triggered! curveExited=${curveExited}, arcCharge=${arcCharge.toFixed(2)}`);
+                // debug.log(`[ArcFlight] Boost triggered! curveExited=${curveExited}, arcCharge=${arcCharge.toFixed(2)}`);
                 const boostStrength = 200 + arcCharge * 2;
                 arcFlightObject.velocity.add(heading.scale(boostStrength));
                 arcCharge *= 0.5;

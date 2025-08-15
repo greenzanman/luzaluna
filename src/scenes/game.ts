@@ -89,7 +89,7 @@ export function mountGameScene() {
             if(heart) {heart.setHeartState(false);}
 
             // Emit particles
-            debug.log("Emitting particles (unimplemented");
+            // debug.log("Emitting particles (unimplemented");
             player.emitParticles(10)
 
             debug.log("HP: " + player.hp())
