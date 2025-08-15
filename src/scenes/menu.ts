@@ -14,15 +14,15 @@ export function mountMenuScene() {
             pos(textPos.add(vec2(0, 150))),
             area(),
             anchor("center"),
-            outline(4),
-            color(BLACK)
+            color(75, 75, 75),
+            outline(4, color(220, 202, 105).color),
         ])
 
         startBtn.add([
             text("START"),
             pos(0),
             anchor("center"),
-            color(WHITE)
+            color(220, 202, 105)
         ])
 
         startBtn.onClick(() => go("game", bestTime, bestBumps));

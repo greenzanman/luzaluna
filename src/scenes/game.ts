@@ -84,13 +84,13 @@ export function mountGameScene() {
 
 
         // Create border    
-        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
+        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 550, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
 
         // Create pollen count
         const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50)
 
         // Creat bump count
-        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 225, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
+        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 425, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
 
         // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
