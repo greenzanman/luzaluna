@@ -3,7 +3,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../main";
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("menu", (bestTime: number, bestBumps: number) => {
+    scene("menu", (bestScore: number) => {
         loadSprite("title", "title.png")
         add([
             sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
@@ -25,6 +25,6 @@ export function mountMenuScene() {
             color(220, 202, 105)
         ])
 
-        startBtn.onClick(() => go("game", bestTime, bestBumps));
+        startBtn.onClick(() => go("game", bestScore));
     })
 }

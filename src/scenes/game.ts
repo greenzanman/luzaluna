@@ -42,10 +42,10 @@ export type Stats = {
 }
 
 export function mountGameScene() {
-    scene("game", (bestTime: number, bestBumps: number) => {
+    scene("game", (bestTime: number) => {
         let stats: Stats = {
-            time: null,
-            bumps: null,
+            time: 0,
+            bumps: 0,
             wasp_kills: 0, 
             bigWasp_kills: 0,
             pollen_fired: 0,
@@ -92,7 +92,7 @@ export function mountGameScene() {
         const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50)
 
         // Creat bump count
-        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 425, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
+        //const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 425, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
 
         // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
@@ -104,7 +104,8 @@ export function mountGameScene() {
         // Bump event listener
         on("bump", "*", () => {
             ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
-            bumpCount.increaseBumps();
+            //bumpCount.increaseBumps();
+            stats.bumps++
         })
 
         on("death", "wasp", () => {
@@ -132,14 +133,13 @@ export function mountGameScene() {
 
             if(player.hp() <= 0) {
                 stats.time = customTimer.getTime()
-                stats.bumps = bumpCount.getBumps()
                 get("*").forEach((gameObj) => {
                     if (!gameObj.tags.includes("particles")) {
                         gameObj.paused = true
                     }
                 })
                 shake(400)
-                wait(2.5, () => go("loss", stats, bestTime, bestBumps))
+                wait(2.5, () => go("loss", stats, bestTime))
             }
 
             
