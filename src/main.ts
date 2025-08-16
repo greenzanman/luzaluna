@@ -26,7 +26,7 @@ export const HEALTH_CAPACITY = 4
 export const HEART_SPACING = 50
 export const HEART_BORDER_THICKNESS = 4
 
-export const WASP_SPEED = 4000
+export const WASP_SPEED = 40
 
 export const INVUL_DURATION = 0.1
 

@@ -1,6 +1,7 @@
 import type { Comp, Vec2, GameObj} from "kaplay";
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
 import {PlayerComp} from "./player"
+import { createWasp } from "./wasp";
 
 const MAX_FLOWER_STATE = 5
 // Flower object
@@ -10,6 +11,7 @@ export interface FlowerComp extends Comp {
     evolveTimer: number;
     evolveState: number;
     flowerScale: number;
+    baseRotation: number;
     direction: Vec2;
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
@@ -17,13 +19,14 @@ export interface FlowerComp extends Comp {
     evolve: () => void;
 }
 
-function flowerComp(newDirection: Vec2): FlowerComp {
+function flowerComp(newDirection: Vec2, startRotation: number): FlowerComp {
     return {
         id: "flowerComp",
         flowerState: 0,
         evolveState: 0,
         evolveTimer: 0,
         flowerScale: 0,
+        baseRotation: startRotation,
         direction: newDirection,
         require: ["pos"],
         getFlowerState(): number {
@@ -38,6 +41,10 @@ function flowerComp(newDirection: Vec2): FlowerComp {
         },
         addFlowerState(addState: number)
         {
+            if (this.evolveState != 0)
+            {
+                return
+            }
             if (this.flowerState == 0) {
                 this.trigger("bloom")
                 this.flowerScale = 0
@@ -46,8 +53,7 @@ function flowerComp(newDirection: Vec2): FlowerComp {
         },
         evolve() {
             this.evolveState = 1;
-            this.evolveTimer = 5;
-            // DECIDE ON EVOLVE STATES HERE
+            this.evolveTimer = 4;
         },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
@@ -67,11 +73,12 @@ function flowerComp(newDirection: Vec2): FlowerComp {
                 if (this.evolveTimer <= 0)
                 {
                     this.evolveState = 0
+                    this.angle = this.baseRotation
+                    this.flowerState = MAX_FLOWER_STATE
+                    this.flowerScale = 1
+                    this.trigger("explode", this.worldPos(), this.direction)
                 }
-                switch (this.evolveState)
-                {
-                    // DO EVOLVE STUFF HERE
-                }
+                this.angle = this.baseRotation + rand(-20, 20)
             }
         },
         draw() {0
@@ -79,7 +86,7 @@ function flowerComp(newDirection: Vec2): FlowerComp {
                 this.flowerScale = Math.min(this.flowerScale, this.flowerState / MAX_FLOWER_STATE)
                 let scal = Math.max(Math.min(1, this.flowerScale), 0.0001)
                 scal = Math.sqrt(scal) * 100;
-                drawSprite({pos: this.direction.unit().scale((scal - 100) / 5), sprite: "flower", anchor: "center", width: scal, height: scal})
+                drawSprite({pos: vec2(0, (100 - scal) / 5), sprite: "flower", anchor: "center", width: scal, height: scal})
             }
         }
     };
@@ -96,7 +103,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         anchor("center"),
         pos(border.toWorld(position)),
         rotate(rotation),
-        flowerComp(flowerDirection),
+        flowerComp(flowerDirection, rotation),
         "flower"
     ]);
     flower.onCollide("pollen", () => {

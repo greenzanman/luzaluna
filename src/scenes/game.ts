@@ -122,6 +122,15 @@ export function mountGameScene() {
             stats.flower_blooms++
         })
 
+        on("explode", "flower", (flower) => {
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
+            timeRatio = Math.min(timeRatio, RAMP_MAX)
+            for (let i = 0; i < rand(1 + timeRatio / 2, 1 + timeRatio); i++)
+            {
+                createWasp(flower.worldPos(), player, stats, 0, flower.direction.unit().scale(80)
+                    .add(vec2(rand(-80, 80), rand(-80, 80))))
+            }
+        })
 
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
@@ -143,7 +152,7 @@ export function mountGameScene() {
         })
 
         let waspPatience = 5
-        const RAMP_START = 12.5
+        const RAMP_START = 15
         const RAMP_RATE = 30
         const RAMP_MAX = 2
         function CreateEnemies() {
@@ -176,19 +185,28 @@ export function mountGameScene() {
                             break;
                     }
                     waspPatience += rand(3, 6)
-                    createWasp(spawnLoc, player, stats, timeRatio)
+                    createWasp(spawnLoc, player, stats, timeRatio, vec2(0, 0))
                 }
             }
         }
     
-        let flowerPatience = 10
+        let flowerPatience = 2
         function createFlowers() {
-            flowerPatience -= dt()
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START + 5, 0) / RAMP_RATE
+            if (timeRatio > 0)
+                flowerPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
             if (flowerPatience < 0)
             {
                 let gottenFlower = flowers[Math.floor(rand(flowers.length))]
-                gottenFlower.evolve();
-                flowerPatience += rand(6, 14)
+                if (gottenFlower.getFlowerState() == 0)
+                {
+                    gottenFlower.evolve();
+                    flowerPatience += rand(8, 14);
+                }
+                else
+                {
+                    flowerPatience += 0.2
+                }
             }
         }
 
@@ -236,7 +254,7 @@ export function mountGameScene() {
             }
 
             CreateEnemies()
-
+            createFlowers()
         });
     });
 }

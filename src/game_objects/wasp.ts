@@ -3,32 +3,45 @@ import {WASP_SPEED} from "../main";
 import { PlayerComp } from "./player";
 
 // Wasp Object
+const DEC_SPEED = 50
 
 export interface WaspComp extends Comp {
     target: GameObj<PosComp>;
     aggression: number;
+    velocity: Vec2;
 }
 
-function waspComp(target: GameObj<PosComp>, newAggression: number): WaspComp {
+function waspComp(target: GameObj<PosComp>, newAggression: number, startVelocity: Vec2): WaspComp {
     return {
         id: "waspComp",
         require: ["pos"],
         target: target,
+        velocity: startVelocity,
         aggression: 1 + Math.min(newAggression / 10, 0.5),
         update() {
+            console.log(this.worldPos())
             let dir = target.worldPos().sub(this.worldPos()).unit()
-            this.move(dir.x * WASP_SPEED * dt() * this.aggression, dir.y * WASP_SPEED * dt() *  this.aggression)
+            this.moveBy(dir.scale(WASP_SPEED * dt() * this.aggression))
+            this.moveBy(this.velocity.scale(dt()))
+            if (this.velocity.len() < dt() * DEC_SPEED)
+            {
+                this.velocity = vec2(0, 0)
+            }
+            else
+            {
+                this.velocity = this.velocity.sub(this.velocity.unit().scale(DEC_SPEED * dt()))
+            }
         }
     }
 }
 
-export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>, stats: Object, aggression: number) {
+export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>, stats: Object, aggression: number, startVelocity: Vec2) {
     let wasp =  add([
         pos(position),
         area(),
         rect(15, 15),
         anchor("center"),
-        waspComp(player, aggression),
+        waspComp(player, aggression, startVelocity),
         color(0.5, 0.5, 1),
         "wasp"
     ]);
