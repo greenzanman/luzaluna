@@ -67,6 +67,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
 ) {
     loadSprite("bud", "BUD.png");
     loadSprite("flower", "FLOWER.png");
+    loadSound("boing", "boing.mp3")
     
     let flower = add([
         area(),
@@ -87,9 +88,12 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         if (flower.getFlowerState() == 0)
         {
             player.takedamage(1)
+        } else {
+            play("boing")
         }
         // Dispatch bump event in order to regen pollen.
         flower.trigger("bump");
+        
     
         player.bump(flower.worldPos(), flowerDirection);
         player.spin(rand(-1, 1))

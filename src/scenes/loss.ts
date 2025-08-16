@@ -4,6 +4,10 @@ import {Stats} from "./game"
 export function mountLossScene() {
     setBackground(75, 75, 75)
     scene("loss", (stats: Stats, bestScore: number) => {
+        loadSound("start", "twee.mp3")
+        loadSound("music", "beeutiful misery.mp3")
+        loadSound("type", "type.mp3")
+        const music = play("music", {loop: true})
         const textPos = center();
         textPos.y -= 200
         textPos.x -= 450
@@ -53,7 +57,15 @@ Score:${score}
             color(220, 202, 105)
         ])
 
-        retryBtn.onClick(() => go("game", bestScore));
+        retryBtn.onClick(() => {
+            play("start")
+            music.stop()
+            go("game", bestScore)
+        });
+
+        retryBtn.onHover(() => {
+            play("hover", {volume: .5})
+        });
 
         const menuBtn = add([
             rect(350, 50, {fill: false}),
@@ -71,7 +83,15 @@ Score:${score}
             color(220, 202, 105)
         ])
 
-        menuBtn.onClick(() => go("menu", bestScore));
+        menuBtn.onClick(() => {
+            play("start")
+            music.stop()
+            go("menu", bestScore)
+        });
+
+        menuBtn.onHover(() => {
+            play("hover", {volume: .5})
+        });
 
         const ratingAnoteText = add([
                     text(""),
@@ -93,6 +113,9 @@ Score:${score}
         loop(.25, () => {
             if(i < statTextArr.length) {
                 statBoard.text += statTextArr[i] + "\n"
+                if(statTextArr[i] != "") {
+                    play("type")
+                }
             } else {
                 
                 let rating = ""
@@ -113,8 +136,10 @@ Score:${score}
                 loop(.5,() => {
                     if (j == -1) {
                         ratingAnoteText.text += "RANK:"
+                        play("type")
                     } else {
                         ratingText.text += rating[j]
+                        play("type")
                     }
                     j++
                 }, rating.length + 1)

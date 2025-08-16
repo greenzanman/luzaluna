@@ -42,7 +42,14 @@ export type Stats = {
 }
 
 export function mountGameScene() {
-    scene("game", (bestTime: number) => {
+    scene("game", (bestScore: number) => {
+        loadSound("death", "explosion.mp3")
+        loadSound("hurt", "explosion2.mp3")
+        loadSound("shoot", "pew.mp3")
+        loadSound("waspDeath", "burst.mp3")
+        loadSound("bloom", "pluck.mp3")
+        loadSound("music", "music2.mp3")
+        const music = play("music")
         let stats: Stats = {
             time: 0,
             bumps: 0,
@@ -110,14 +117,17 @@ export function mountGameScene() {
 
         on("death", "wasp", () => {
             stats.wasp_kills++
+            play("waspDeath", {volume: .25})
         })
 
         on("death", "bigWasp", () => {
             stats.bigWasp_kills++
+            play("waspDeath", {volume: .25})
         })
 
         on("bloom", "flower", () => {
             stats.flower_blooms++
+            play("bloom")
         })
 
 
@@ -139,7 +149,13 @@ export function mountGameScene() {
                     }
                 })
                 shake(400)
-                wait(2.5, () => go("loss", stats, bestTime))
+                play("death")
+                wait(2.5, () => {
+                    music.stop()
+                    go("loss", stats, bestScore)
+                })
+            } else {
+                play("hurt")
             }
 
             
@@ -219,6 +235,7 @@ export function mountGameScene() {
                         createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
                         player.push(dir.scale(-POLLEN_PUSH))
                         stats.pollen_fired++
+                        play("shoot", {volume: 0.25})
                     }
                 }
                 else // Force release and reclick once out of pollen

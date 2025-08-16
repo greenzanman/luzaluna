@@ -4,7 +4,11 @@ export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
     scene("menu", (bestScore: number) => {
+        loadSound("bees", "bees.mp3")
+        loadSound("start", "twee.mp3")
+        loadSound("hover", "twee2.mp3")
         loadSprite("title", "title.png")
+        const beeSound = play("bees", {loop: true})
         add([
             sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
         ]);
@@ -25,6 +29,14 @@ export function mountMenuScene() {
             color(220, 202, 105)
         ])
 
-        startBtn.onClick(() => go("game", bestScore));
+        startBtn.onClick(() => {
+            play("start")
+            beeSound.stop()
+            go("game", bestScore)
+        });
+
+        startBtn.onHover(() => {
+            play("hover", {volume: .5})
+        });
     })
 }
