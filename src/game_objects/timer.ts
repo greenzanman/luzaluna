@@ -9,7 +9,7 @@ function customTimerComp(start_time: number): CustomTimerComp {
     return {
             id: "customTimerComp",
             require: ["pos", "text"],
-            curr_time: start_time,
+            curr_time: 0,
             getTime() {
                 return this.curr_time
             },

@@ -2,7 +2,7 @@ import type { Comp, Vec2, GameObj} from "kaplay";
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
 import {PlayerComp} from "./player"
 
-
+const MAX_FLOWER_STATE = 5
 // Flower object
 
 export interface FlowerComp extends Comp {
@@ -13,6 +13,7 @@ export interface FlowerComp extends Comp {
     direction: Vec2;
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
+    addFlowerState: (addState: number) => void;
     evolve: () => void;
 }
 
@@ -35,6 +36,14 @@ function flowerComp(newDirection: Vec2): FlowerComp {
             }
             this.flowerState = newState
         },
+        addFlowerState(addState: number)
+        {
+            if (this.flowerState == 0) {
+                this.trigger("bloom")
+                this.flowerScale = 0
+            }
+            this.flowerState = Math.min(this.flowerState + addState, MAX_FLOWER_STATE)
+        },
         evolve() {
             this.evolveState = 1;
             this.evolveTimer = 5;
@@ -44,7 +53,7 @@ function flowerComp(newDirection: Vec2): FlowerComp {
             this.flowerState = Math.max(0, this.flowerState - dt())
             if (this.flowerState > 0)
             {
-                this.flowerScale = Math.min(this.flowerScale + dt(), 1)
+                this.flowerScale = Math.min(this.flowerScale + dt() * 2, 1)
             }
             else
             {
@@ -67,8 +76,9 @@ function flowerComp(newDirection: Vec2): FlowerComp {
         },
         draw() {0
             if (this.flowerState > 0) {
-                this.flowerScale = Math.min(this.flowerScale, this.flowerState / 2)
-                const scal = Math.max(Math.min(100, this.flowerScale * 100), 0.1)
+                this.flowerScale = Math.min(this.flowerScale, this.flowerState / MAX_FLOWER_STATE)
+                let scal = Math.max(Math.min(1, this.flowerScale), 0.0001)
+                scal = Math.sqrt(scal) * 100;
                 drawSprite({pos: this.direction.unit().scale((scal - 100) / 5), sprite: "flower", anchor: "center", width: scal, height: scal})
             }
         }
@@ -90,7 +100,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         "flower"
     ]);
     flower.onCollide("pollen", () => {
-        flower.setFlowerState(5);
+        flower.addFlowerState(2);
     });
  
     

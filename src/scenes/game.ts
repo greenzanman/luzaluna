@@ -111,8 +111,11 @@ export function mountGameScene() {
             stats.wasp_kills++
         })
 
+        let waspPresent = false
         on("death", "bigWasp", () => {
             stats.bigWasp_kills++
+            waspPresent = false
+            
         })
 
         on("bloom", "flower", () => {
@@ -140,16 +143,21 @@ export function mountGameScene() {
         })
 
         let waspPatience = 5
+        const RAMP_START = 12.5
+        const RAMP_RATE = 30
+        const RAMP_MAX = 2
         function CreateEnemies() {
-            waspPatience -= dt()
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
+            waspPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
             if (waspPatience < 0)
             {
                 let spawnLoc = vec2(SCREEN_WIDTH / 2, - 50)
                 let type = Math.floor(rand(9) / 2)
-                if (type == 4) // TODO: improve spawning
+                if (type == 4 && timeRatio > 0 && (!waspPresent || timeRatio > 4)) // TODO: improve spawning
                 {
-                    waspPatience += 30
+                    waspPatience += 15
                     createBigWasp(spawnLoc, player,center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT), stats);
+                    waspPresent = true
                 }
                 else {
                     switch (type)
@@ -167,8 +175,8 @@ export function mountGameScene() {
                             spawnLoc = vec2(rand(SCREEN_WIDTH), SCREEN_HEIGHT)
                             break;
                     }
-                    waspPatience += rand(1, 3)
-                    createWasp(spawnLoc, player, stats)
+                    waspPatience += rand(3, 6)
+                    createWasp(spawnLoc, player, stats, timeRatio)
                 }
             }
         }
