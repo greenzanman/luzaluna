@@ -13,7 +13,7 @@ export const PADDING_HORIZ = 20
 export const BORDER_THICKNESS = 1
 
 export const FLOWER_SPACING = 25
-export const GRAVITY = 200
+export const GRAVITY = 70
 export const BUMP_SPEED = 200
 export const ROTATION_FACTOR = 500
 export const POLLEN_SPEED = 500
