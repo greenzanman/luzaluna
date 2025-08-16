@@ -28,7 +28,6 @@ import {createCustomTimer} from "../game_objects/timer"
 
 import {createBumpCount} from "../game_objects/bumpCount"
 import { createWasp } from "../game_objects/wasp"
-import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
 import { GameObj } from "kaplay"
 
@@ -66,6 +65,8 @@ export function mountGameScene() {
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         //For each segment interpolate the flowers along the segment.
+        loadSprite("bud", "BUD.png");
+        loadSprite("flower", "FLOWER.png");
         const flowers: GameObj<FlowerComp>[] = [];
         segments.forEach(([start, end], i) => {
             const dx = end.x - start.x;
@@ -77,9 +78,8 @@ export function mountGameScene() {
             // Angle of the normal vector (in radians)
             const angle = rad2deg(Math.atan2(ny, nx));
 
-            const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
-                const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
+                const position = vec2(lerp(start.x, end.x, (j + 0.5) / FLOWER_SPACING),lerp(start.y, end.y, (j + 0.5) / FLOWER_SPACING));
                 flowers.push(createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex, angle - 90));
             });
         });
@@ -103,7 +103,7 @@ export function mountGameScene() {
 
         // Bump event listener
         on("bump", "*", () => {
-            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
+            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 4);
             bumpCount.increaseBumps();
         })
 
@@ -218,12 +218,13 @@ export function mountGameScene() {
                 else // Force release and reclick once out of pollen
                 {
                     mousePressed = false
+                    inaccuracy = Math.max(0, inaccuracy * dt() - 4)
                 }
                 inaccuracy += dt()
             }
             else
             {
-                inaccuracy = 0
+                inaccuracy = Math.max(0, inaccuracy * dt() - 4)
             }
 
             CreateEnemies()

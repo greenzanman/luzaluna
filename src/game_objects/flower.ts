@@ -37,7 +37,7 @@ function flowerComp(): FlowerComp {
         },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
-            this.area.scale = this.flowerState > 0 ? 2 : 1;
+            this.area.scale = this.flowerState > 0 ? 1.25 : 0.5;
 
             if (this.evolveState != 0)
             {
@@ -65,12 +65,10 @@ function flowerComp(): FlowerComp {
 export function createFlower(position: Vec2, flowerDirection: Vec2, player: GameObj<PlayerComp>,
     border: GameObj, rotation: number
 ) {
-    loadSprite("bud", "BUD.png");
-    loadSprite("flower", "FLOWER.png");
     
     let flower = add([
         area(),
-        scale(.5),
+        scale(0.75),
         sprite("bud"),
         anchor("center"),
         pos(border.toWorld(position)),
@@ -91,7 +89,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         // Dispatch bump event in order to regen pollen.
         flower.trigger("bump");
     
-        player.bump(flower.worldPos(), flowerDirection);
+        player.bump(flowerDirection, 1);
         player.spin(rand(-1, 1))
 
     })

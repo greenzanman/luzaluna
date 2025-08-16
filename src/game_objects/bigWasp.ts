@@ -1,5 +1,8 @@
 import type { Comp, Vec2, GameObj, PosComp, HealthComp } from "kaplay";
 import { PlayerComp } from "./player";
+import {
+    BUMP_SPEED,
+} from "../main";
 
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 100;
@@ -202,6 +205,7 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
 
     wasp.onCollide("player", () => {
         player.takedamage(1);
+        player.bumpDirect(wasp.worldPos(), 0.3)
     });
     return wasp
 }

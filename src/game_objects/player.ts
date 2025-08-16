@@ -34,7 +34,8 @@ export interface PlayerComp extends Comp {
     velocity: Vec2;
     angVelocity: number;
     invulTimer: number;
-    bump: (cause: Vec2, direction: Vec2) => void;
+    bump: (direction: Vec2, coef: number) => void;
+    bumpDirect: (cause: Vec2, coef: number) => void;
     setVelocity: (newVelocity: Vec2) => void;
     push: (dir: Vec2) => void;
     takedamage: (damage: number) => void;
@@ -62,13 +63,16 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         setVelocity(newVelocity: Vec2) {
             this.velocity = newVelocity  
         },
-        bump(cause: Vec2, direction: Vec2) {
-            let offset = this.worldPos().sub(cause).unit();
+        bump(direction: Vec2, coef: number) {
             //this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
             let dirProj = direction.scale(this.velocity.dot(direction) / direction.len() / direction.len())
             this.velocity = this.velocity.sub(dirProj);
             //this.velocity = direction.unit().scale(BUMP_SPEED);
-            this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED));
+            this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED * coef));
+        },
+        bumpDirect(cause: Vec2, coef: number) {
+            let offset = this.worldPos().sub(cause).unit();
+            this.bump(offset, coef)
         },
         spin(coef: number) 
         {
