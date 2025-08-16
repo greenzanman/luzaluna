@@ -217,10 +217,10 @@ export function mountGameScene() {
         }
 
         let pollenDelay = 0
-        const POLLEN_DELAY = 0.05
-        let inaccuracy = 0
-        const INACCURACY_FLOOR = 0.5
-        const INACCURACY_COEF = 100
+        let shootingDuration = 0
+        const POLLEN_DELAY = 0.04
+        const INACCURACY_FLOOR = 0
+        const INACCURACY_MAX = 0.2
 
         // Shared aim direction
         let aimDirection = vec2(0, 0);
@@ -245,6 +245,8 @@ export function mountGameScene() {
             {
                 if (ammoCount.GetAmmo() >= 1)
                 {
+                    shootingDuration += dt();
+                    
                     if (pollenDelay == 0) {
                         const ammo = ammoCount.GetAmmo();
                         const ammoRatio = ammo / POLLEN_CAPACITY;
@@ -253,16 +255,21 @@ export function mountGameScene() {
 
                         ammoCount.DecreaseAmmo(1);
 
-                        let inaccuracyVal = Math.max(inaccuracy - INACCURACY_FLOOR, 0) * INACCURACY_COEF
+                        let lerpFactor = Math.min(shootingDuration / 1.5, 1); // 1.5 seconds to reach max inaccuracy
+                        let inaccuracyVal = lerp(INACCURACY_FLOOR, INACCURACY_MAX, lerpFactor)
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
-      
 
                         aimDirection = rawTargetDirection.add(inaccuracyOffset);
                         createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED))
 
 
+
+                        // Normal pollen push
+                        // player.push(aimDirection.scale(-POLLEN_PUSH));
+
+
                         // Dynamic pollen push based on ammo
-                        const minPush = POLLEN_PUSH * 0.5;      // normal push at full ammo
+                        const minPush = POLLEN_PUSH * 0.2;      // normal push at full ammo
                         const maxPush = POLLEN_PUSH * 1;  // stronger push at zero ammo
                         const pushStrength = lerp(minPush, maxPush, 1 - ammoRatio);
                         player.push(aimDirection.scale(-pushStrength))
@@ -270,8 +277,7 @@ export function mountGameScene() {
                         //     player.push(aimDirection.scale(-POLLEN_PUSH));
                         // }
 
-                        // Not dynamic pollen push
-                        // player.push(aimDirection.scale(-POLLEN_PUSH));
+                        
 
                         stats.pollen_fired++
 
@@ -281,17 +287,21 @@ export function mountGameScene() {
                 else // Force release and reclick once out of pollen
                 {
                     mousePressed = false
-                    inaccuracy = Math.max(0, inaccuracy * dt() - 4)
+
+                    // if u want to have a cooldown on shooting after running out of pollen:
+                    // pollenDelay = 5
                 }
+                
             }
             else
             {
-                inaccuracy = Math.max(0, inaccuracy * dt() - 4)
-
                 // Player can nudge movement just a bit when not shooting
                 const downwardness = Math.max(aimDirection.y, 0); 
                 const pushMultiplier = lerp(1, 2.5, downwardness); 
                 player.push(aimDirection.scale(-POLLEN_PUSH / 90 * pushMultiplier));
+
+                // Reset shooting duration after mouse up
+                shootingDuration = 0;
             }
 
             // If player not shooting, smoothly snap aim direction to target
