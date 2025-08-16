@@ -176,13 +176,14 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
             if (this.health <= 0)
             {
                 this.destroy()
+                this.trigger("death")
             }
         }
     }
 }
 
 export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>,
-        center: Vec2, dimensions: Vec2
+        center: Vec2, dimensions: Vec2, stats: Object
 ) {
     let wasp =  add([
         pos(position),

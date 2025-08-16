@@ -5,7 +5,7 @@ interface HexBorderComp extends Comp {}
 function hexBorderComp(): HexBorderComp {
     return {
         id: "borderComp",
-        require: ["pos", "polygon", "outline", "color"],
+        require: ["pos", "polygon", "outline"],
     };
 }
 
@@ -28,7 +28,6 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
         hexBorderComp(),
         pos(position),
         polygon(points2, {fill: false}),
-        outline(out),
-        color(RED)
+        outline(out, color(220, 202, 105).color),
     ])
 } 

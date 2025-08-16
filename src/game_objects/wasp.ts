@@ -20,7 +20,7 @@ function waspComp(target: GameObj<PosComp>): WaspComp {
     }
 }
 
-export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>) {
+export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>, stats: Object) {
     let wasp =  add([
         pos(position),
         area(),
@@ -32,6 +32,7 @@ export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>
     ]);
     
     wasp.onCollide("pollen", () => {
+        
         wasp.destroy();
     });
 
@@ -39,5 +40,10 @@ export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>
         wasp.destroy();
         player.takedamage(1);
     });
+
+    wasp.onDestroy(() => {
+        wasp.trigger("death")
+    })
+
     return wasp
 }

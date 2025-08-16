@@ -21,9 +21,10 @@ export function createArrow(player: GameObj): GameObj{
         area(),
         rect(5, 60),
         pos(player.worldPos()),
-        color(RED),
+        color(220, 202, 105),
         "arrow"
     ]);
+    
 
     return arrow
 }
@@ -80,26 +81,26 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         emitParticles(numParticles: number)
         {
             // // TODO: Find out if particle emitter is being properly destroyed
-            // let loadedSpriteData = getSprite("bean").data;
+            let loadedSpriteData = getSprite("bean").data;
             // console.log(loadedSpriteData)
-            // let particleEmitter = add([
-            //     pos(this.worldPos()),
-            //     timer(),
-            //     particles({
-            //         max: numParticles,
-            //         speed: [75, 500],
-            //         lifeTime: [0.75,1.0],
-            //         angle: [0, 360],
-            //         opacities: [1.0, 0.0],
-            //         texture: loadedSpriteData.tex, // texture of the sprite
-            //         quads: loadedSpriteData.frames, // to tell whe emitter what frames of the sprite to use
-            //     }, {
-            //         direction: 0,
-            //         spread: 360,
-            //         lifetime: 1.0,
-            //     }),
-            // ])
-            // particleEmitter.emit(numParticles);
+            let particleEmitter = add([
+                 pos(this.worldPos()),
+                 timer(),
+                particles({
+                    max: numParticles,
+                     speed: [75, 500],
+                     lifeTime: [0.75,1.0],
+                     angle: [0, 360],
+                     opacities: [1.0, 0.0],
+                     texture: loadedSpriteData.tex, // texture of the sprite
+                     quads: loadedSpriteData.frames, // to tell whe emitter what frames of the sprite to use
+                 }, {
+                     direction: 0,
+                     spread: 360,
+                     lifetime: 1.0,
+                 }),
+             ])
+            particleEmitter.emit(numParticles);
         },
         setPlayerState(state: number)
         {
@@ -117,21 +118,40 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
                 shake(6 * damage);
                 this.invulTimer = INVUL_DURATION;
             }
+        },
+        draw()
+        {
+            if (this.invulTimer != 0)
+            {
+                this.playerState++
+                if(this.playerState == 20) {
+                    this.opacity = this.opacity == 1? 0.25 : 1
+                    this.playerState = 0
+                }
+            } else {
+                this.opacity = 1
+            }
         }
     }
 }
 
 export function createPlayer(x: number, y: number) {
+    loadSprite("bean", "icon.png");
+    loadSprite("bee", "BEE.png");
     const player = add([
         playerComp(vec2(0, -50), 300),
         health(HEALTH_CAPACITY),
-        area(),
-        rect(30, 30),
+        area({scale: .65}),
+        //rect(30, 30),
         timer(),
         rotate(),
+        opacity(),
         anchor("center"),
         pos(x, y),
-        color(0.5, 0.5, 1),
+        sprite("bee"),
+        scale(.5),
+        //color(0.5, 0.5, 1),
+        z(2),
         "player"
     ]);
     return player

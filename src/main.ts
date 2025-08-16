@@ -5,19 +5,28 @@ import {mountGameScene} from "./scenes/game"
 import {mountLossScene} from "./scenes/loss"
 import {mountMenuScene} from "./scenes/menu";
 
-export const SCREEN_WIDTH = 640
-export const SCREEN_HEIGHT = 480
+export const SCREEN_WIDTH = 1000
+export const SCREEN_HEIGHT = 600
 
 export const PADDING_VERT = 60
 export const PADDING_HORIZ = 20
-export const BORDER_THICKNESS = 16
+export const BORDER_THICKNESS = 1
 
+<<<<<<< HEAD
 export const FLOWER_SPACING = 25
 export const GRAVITY = 200
 export const BUMP_SPEED = 200
 export const ROTATION_FACTOR = 500
 export const POLLEN_SPEED = 500
 export const POLLEN_PUSH = 20
+=======
+export const FLOWER_SPACING = 10
+export const GRAVITY = 10000 / 2
+export const BUMP_SPEED = 12000 * 2
+export const ROTATION_FACTOR = 500
+export const POLLEN_SPEED = 30000
+export const POLLEN_PUSH = 300 * 2
+>>>>>>> lp/more-stuff
 
 export const POLLEN_CAPACITY = 30
 export const POLLEN_RECHARGE_RATE = 6
@@ -28,7 +37,11 @@ export const HEART_BORDER_THICKNESS = 4
 
 export const WASP_SPEED = 4000
 
+<<<<<<< HEAD
 export const INVUL_DURATION = 0.1
+=======
+export const INVUL_DURATION = 2
+>>>>>>> lp/more-stuff
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
@@ -53,4 +66,4 @@ mountMenuScene();
 mountGameScene();
 mountLossScene();
 
-go("menu");
+go("menu", 0, 0);

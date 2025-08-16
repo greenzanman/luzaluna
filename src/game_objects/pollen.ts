@@ -23,6 +23,7 @@ export function createPollen(position: Vec2, vel: Vec2) {
         anchor("center"),
         pos(position.x, position.y),
         pollenComp(vel),
+        color(220, 202, 105),
         "pollen"
     ]);
 

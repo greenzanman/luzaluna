@@ -32,8 +32,25 @@ import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
 import { GameObj } from "kaplay"
 
+export type Stats = {
+    time: number,
+    bumps: number,
+    wasp_kills: number,
+    bigWasp_kills: number,
+    pollen_fired: number,
+    flower_blooms: number
+}
+
 export function mountGameScene() {
-    scene("game", () => {
+    scene("game", (bestTime: number, bestBumps: number) => {
+        let stats: Stats = {
+            time: null,
+            bumps: null,
+            wasp_kills: 0, 
+            bigWasp_kills: 0,
+            pollen_fired: 0,
+            flower_blooms: 0
+        }
         // Create player
         const player = createPlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         const arrow = createArrow(player)
@@ -51,28 +68,37 @@ export function mountGameScene() {
         //For each segment interpolate the flowers along the segment.
         const flowers: GameObj<FlowerComp>[] = [];
         segments.forEach(([start, end], i) => {
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+
+            // Normal vector: rotate direction vector 90 degrees
+            const nx = -dy;
+            const ny = dx;
+            // Angle of the normal vector (in radians)
+            const angle = rad2deg(Math.atan2(ny, nx));
+
             const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
                 const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
-                flowers.push(createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex));
+                flowers.push(createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex, angle - 90));
             });
         });
 
 
         // Create border    
-        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 350, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
+        const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 550, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
 
         // Create pollen count
         const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50)
 
         // Creat bump count
-        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 225, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
+        const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 425, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
 
         // Create health bar
         const healthBar = createHealthBar(PADDING_HORIZ, HEART_SPACING / 2 + PADDING_VERT - 85, 40)
         // Create hearts
         for (let i = 0, j = 0; j < HEALTH_CAPACITY; i += HEART_SPACING, j++) {
-            createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, BLACK, healthBar)
+            createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
         // Bump event listener
@@ -81,19 +107,33 @@ export function mountGameScene() {
             bumpCount.increaseBumps();
         })
 
+        on("death", "wasp", () => {
+            stats.wasp_kills++
+        })
+
+        on("death", "bigWasp", () => {
+            stats.bigWasp_kills++
+        })
+
+        on("bloom", "flower", () => {
+            stats.flower_blooms++
+        })
+
+
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
             let heart = healthBar.get("heart").findLast((heart) => heart.getHeartState())
             if(heart) {heart.setHeartState(false);}
 
             // Emit particles
-            debug.log("Emitting particles (unimplemented");
             player.emitParticles(10)
 
             debug.log(player.hp())
 
             if(player.hp() <= 0) {
-                go("loss", customTimer.getTime(), bumpCount.getBumps());
+                stats.time = customTimer.getTime()
+                stats.bumps = bumpCount.getBumps()
+                go("loss", stats, bestTime, bestBumps);
             }
 
             
@@ -109,9 +149,7 @@ export function mountGameScene() {
                 if (type == 4) // TODO: improve spawning
                 {
                     waspPatience += 30
-                    createBigWasp(spawnLoc, player,
-                        center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT)
-                    );
+                    createBigWasp(spawnLoc, player,center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT), stats);
                 }
                 else {
                     switch (type)
@@ -130,7 +168,7 @@ export function mountGameScene() {
                             break;
                     }
                     waspPatience += rand(1, 3)
-                    createWasp(spawnLoc, player)
+                    createWasp(spawnLoc, player, stats)
                 }
             }
         }
@@ -174,6 +212,7 @@ export function mountGameScene() {
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
                         createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
                         player.push(dir.scale(-POLLEN_PUSH))
+                        stats.pollen_fired++
                     }
                 }
                 else // Force release and reclick once out of pollen

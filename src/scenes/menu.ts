@@ -1,13 +1,12 @@
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../main";
+
 export function mountMenuScene() {
     const textPos = center();
     textPos.y -= 40 
-    scene("menu", () => {
+    scene("menu", (bestTime: number, bestBumps: number) => {
+        loadSprite("title", "title.png")
         add([
-            text("TUMBLEBEE"),
-            pos(textPos),
-            scale(2),
-            anchor("center"),
-            color(BLACK)
+            sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
         ]);
 
         const startBtn = add([
@@ -15,17 +14,17 @@ export function mountMenuScene() {
             pos(textPos.add(vec2(0, 150))),
             area(),
             anchor("center"),
-            outline(4),
-            color(BLACK)
+            color(75, 75, 75),
+            outline(4, color(220, 202, 105).color),
         ])
 
         startBtn.add([
             text("START"),
             pos(0),
             anchor("center"),
-            color(WHITE)
+            color(220, 202, 105)
         ])
 
-        startBtn.onClick(() => go("game"));
+        startBtn.onClick(() => go("game", bestTime, bestBumps));
     })
 }
