@@ -101,10 +101,16 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
-        // Bump event listener
+        // Bump event listener with debounce
+        let bumpCooldown = 0;
+        const BUMP_DEBOUNCE = 0.3; // seconds
+
         on("bump", "*", () => {
-            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 4);
-            bumpCount.increaseBumps();
+            if (bumpCooldown <= 0) {
+                ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
+                bumpCount.increaseBumps();
+                bumpCooldown = BUMP_DEBOUNCE;
+            }
         })
 
         on("death", "wasp", () => {
@@ -140,7 +146,7 @@ export function mountGameScene() {
             // Emit particles
             player.emitParticles(10)
 
-            debug.log(player.hp())
+            debug.log("HP: " + player.hp())
 
             if(player.hp() <= 0) {
                 stats.time = customTimer.getTime()
@@ -216,8 +222,18 @@ export function mountGameScene() {
         const INACCURACY_FLOOR = 0.5
         const INACCURACY_COEF = 100
 
+        // Shared aim direction
+        let aimDirection = vec2(0, 0);
+
         // Tick function
         onUpdate(() => {
+            
+            // Calculate target direction
+            const rawTargetDirection = mousePos().sub(player.worldPos()).scale(1).unit();
+            // Lerp factor: higher = faster snap, lower = smoother
+            const lerpAimFactor = 0.15;
+            let playerShot = false;
+
             // QOL click and hold
             if (isMousePressed())
             {
@@ -230,15 +246,36 @@ export function mountGameScene() {
                 if (ammoCount.GetAmmo() >= 1)
                 {
                     if (pollenDelay == 0) {
-                    //let dir = mousePos().sub(player.worldPos()).unit()
-                        pollenDelay = POLLEN_DELAY
-                        let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
-                        ammoCount.DecreaseAmmo(1)
+                        const ammo = ammoCount.GetAmmo();
+                        const ammoRatio = ammo / POLLEN_CAPACITY;
+
+                        pollenDelay = POLLEN_DELAY;
+
+                        ammoCount.DecreaseAmmo(1);
+
                         let inaccuracyVal = Math.max(inaccuracy - INACCURACY_FLOOR, 0) * INACCURACY_COEF
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
-                        createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
-                        player.push(dir.scale(-POLLEN_PUSH))
+      
+
+                        aimDirection = rawTargetDirection.add(inaccuracyOffset);
+                        createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED))
+
+
+                        // Dynamic pollen push based on ammo
+                        const minPush = POLLEN_PUSH * 0.5;      // normal push at full ammo
+                        const maxPush = POLLEN_PUSH * 1;  // stronger push at zero ammo
+                        const pushStrength = lerp(minPush, maxPush, 1 - ammoRatio);
+                        player.push(aimDirection.scale(-pushStrength))
+                        // if (ammoCount.GetAmmo() < POLLEN_CAPACITY / 4) {
+                        //     player.push(aimDirection.scale(-POLLEN_PUSH));
+                        // }
+
+                        // Not dynamic pollen push
+                        // player.push(aimDirection.scale(-POLLEN_PUSH));
+
                         stats.pollen_fired++
+
+                        playerShot = true;
                     }
                 }
                 else // Force release and reclick once out of pollen
@@ -246,16 +283,30 @@ export function mountGameScene() {
                     mousePressed = false
                     inaccuracy = Math.max(0, inaccuracy * dt() - 4)
                 }
-                inaccuracy += dt()
             }
             else
             {
                 inaccuracy = Math.max(0, inaccuracy * dt() - 4)
+
+                // Player can nudge movement just a bit when not shooting
+                const downwardness = Math.max(aimDirection.y, 0); 
+                const pushMultiplier = lerp(1, 2.5, downwardness); 
+                player.push(aimDirection.scale(-POLLEN_PUSH / 90 * pushMultiplier));
             }
+
+            // If player not shooting, smoothly snap aim direction to target
+            if (playerShot == false)
+                    aimDirection = aimDirection.lerp(rawTargetDirection, lerpAimFactor).unit();
+
+            // Update bump cooldown
+            bumpCooldown = Math.max(bumpCooldown - dt(), 0);
 
             CreateEnemies()
             createFlowers()
         });
+
+        // Pass aimDirection to arrowComp
+        arrow.aimDirection = () => aimDirection;
     });
 }
 

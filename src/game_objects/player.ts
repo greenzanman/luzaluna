@@ -1,6 +1,7 @@
 import type { Comp, GameObj, Vec2 } from "kaplay";
 import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} from "../main"
 
+const MAX_PLAYER_SPEED = 800; 
 
 // Player Object
 export interface ArrowComp extends Comp {}
@@ -9,8 +10,10 @@ function arrowComp(player: GameObj): ArrowComp {
     return {
         id: "ArrowComp",
         update() {
-            this.pos = player.worldPos()
-            this.angle = mousePos().sub(player.worldPos()).unit().scale(-1).angle() - 90
+            // Use aimDirection if provided, otherwise fallback
+            const dir = this.aimDirection ? this.aimDirection() : mousePos().sub(player.worldPos()).unit().scale(-1);
+            this.pos = player.worldPos();
+            this.angle = dir.angle() - 90;
         },
     }
 }
@@ -56,6 +59,11 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         update() {
             this.velocity.y += GRAVITY * dt();
             this.moveBy(this.velocity.scale(dt()));
+
+            // Clamp velocity to max speed
+            if (this.velocity.len() > MAX_PLAYER_SPEED) {
+                this.velocity = this.velocity.unit().scale(MAX_PLAYER_SPEED);
+            }
         
             this.invulTimer = Math.max(0, this.invulTimer - dt());
             this.rotateBy(this.angVelocity * dt())
