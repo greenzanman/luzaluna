@@ -49,7 +49,7 @@ export function mountGameScene() {
         loadSound("waspDeath", "burst.mp3")
         loadSound("bloom", "pluck.mp3")
         loadSound("music", "music2.mp3")
-        const music = play("music")
+        const music = play("music", {loop: true})
         let stats: Stats = {
             time: 0,
             bumps: 0,
