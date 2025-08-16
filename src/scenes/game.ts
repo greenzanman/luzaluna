@@ -195,7 +195,7 @@ export function mountGameScene() {
         const POLLEN_DELAY = 0.04
         const INACCURACY_FLOOR = 0.3
         const INACCURACY_COEF = 1
-        const INACCURACY_MAX = 0.7
+        const INACCURACY_MAX = 0.6
 
         // Shared aim direction
         let aimDirection = vec2(0, 0);
