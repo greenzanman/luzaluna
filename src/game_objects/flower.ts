@@ -37,7 +37,7 @@ function flowerComp(): FlowerComp {
         },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
-            this.area.scale = this.flowerState > 0 ? 2 : 1;
+            this.area.scale = this.flowerState > 0 ? 1.5 : 1;
 
             if (this.evolveState != 0)
             {

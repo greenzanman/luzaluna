@@ -15,8 +15,10 @@ function customTimerComp(start_time: number): CustomTimerComp {
             },
             draw() 
             {
-                this.curr_time = Math.round((time() - start_time) * 1000) / 1000;
-                this.text = "Time:" + this.curr_time;
+                if(!this.paused) {
+                    this.curr_time = Math.round((time() - start_time) * 1000) / 1000;
+                    this.text = "Time:" + this.curr_time;
+                }
             }
         }
 }

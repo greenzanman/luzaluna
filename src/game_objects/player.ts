@@ -84,8 +84,8 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             let loadedSpriteData = getSprite("bean").data;
             // console.log(loadedSpriteData)
             let particleEmitter = add([
-                 pos(this.worldPos()),
-                 timer(),
+                pos(this.worldPos()),
+                timer(),
                 particles({
                     max: numParticles,
                      speed: [75, 500],
@@ -99,7 +99,8 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
                      spread: 360,
                      lifetime: 1.0,
                  }),
-             ])
+                "particles"
+            ])
             particleEmitter.emit(numParticles);
         },
         setPlayerState(state: number)
@@ -121,14 +122,14 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         },
         draw()
         {
-            if (this.invulTimer != 0)
+            if (this.invulTimer != 0 && !this.paused)
             {
                 this.playerState++
                 if(this.playerState == 20) {
                     this.opacity = this.opacity == 1? 0.25 : 1
                     this.playerState = 0
                 }
-            } else {
+            } else  {
                 this.opacity = 1
             }
         }
@@ -141,11 +142,12 @@ export function createPlayer(x: number, y: number) {
     const player = add([
         playerComp(vec2(0, -50), 300),
         health(HEALTH_CAPACITY),
-        area({scale: .65}),
+        area({scale: .5}),
         //rect(30, 30),
         timer(),
         rotate(),
         opacity(),
+        animate(),
         anchor("center"),
         pos(x, y),
         sprite("bee"),

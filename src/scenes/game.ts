@@ -133,7 +133,13 @@ export function mountGameScene() {
             if(player.hp() <= 0) {
                 stats.time = customTimer.getTime()
                 stats.bumps = bumpCount.getBumps()
-                go("loss", stats, bestTime, bestBumps);
+                get("*").forEach((gameObj) => {
+                    if (!gameObj.tags.includes("particles")) {
+                        gameObj.paused = true
+                    }
+                })
+                shake(400)
+                wait(2.5, () => go("loss", stats, bestTime, bestBumps))
             }
 
             
