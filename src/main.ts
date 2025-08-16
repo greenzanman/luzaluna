@@ -13,8 +13,8 @@ export const PADDING_HORIZ = 20
 export const BORDER_THICKNESS = 1
 
 export const FLOWER_SPACING = 8
-export const GRAVITY = 200
-export const BUMP_SPEED = 300
+export const GRAVITY = 100
+export const BUMP_SPEED = 200
 export const ROTATION_FACTOR = 500
 export const POLLEN_SPEED = 500
 export const POLLEN_PUSH = 20
@@ -28,7 +28,7 @@ export const HEART_BORDER_THICKNESS = 4
 
 export const WASP_SPEED = 40
 
-export const INVUL_DURATION = 0.1
+export const INVUL_DURATION = 0.3
 
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
