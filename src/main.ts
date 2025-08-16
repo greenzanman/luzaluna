@@ -20,7 +20,7 @@ export const POLLEN_SPEED = 500
 export const POLLEN_PUSH = 20
 
 export const POLLEN_CAPACITY = 30
-export const POLLEN_RECHARGE_RATE = 6
+export const POLLEN_RECHARGE_RATE = 3.5
 
 export const HEALTH_CAPACITY = 4
 export const HEART_SPACING = 50
