@@ -55,10 +55,9 @@ export function mountGameScene() {
         const arrow = createArrow(player)
         let mousePressed = false
 
-        const rect = canvas.getBoundingClientRect();
         const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
-        const borderPos = vec2(rect.width / 2 - borderWidth / 2, rect.height / 2 - borderHeight / 2)
+        const borderPos = vec2(SCREEN_WIDTH / 2 - borderWidth / 2, SCREEN_HEIGHT / 2 - borderHeight / 2)
         const center = vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         const hex = createHexBorder(borderPos, borderWidth, borderHeight, BORDER_THICKNESS)
 

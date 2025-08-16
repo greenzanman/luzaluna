@@ -40,9 +40,11 @@ export const INVUL_DURATION = 0.3
 
 
 const game: HTMLElement = document.getElementById("game");
+
 kaplay({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
+    letterbox: true,
     debugKey: "0",
     root: game
 });
