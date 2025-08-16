@@ -9,17 +9,21 @@ export interface FlowerComp extends Comp {
     flowerState: number;
     evolveTimer: number;
     evolveState: number;
+    flowerScale: number;
+    direction: Vec2;
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
     evolve: () => void;
 }
 
-function flowerComp(): FlowerComp {
+function flowerComp(newDirection: Vec2): FlowerComp {
     return {
         id: "flowerComp",
         flowerState: 0,
         evolveState: 0,
         evolveTimer: 0,
+        flowerScale: 0,
+        direction: newDirection,
         require: ["pos"],
         getFlowerState(): number {
             return this.flowerState;
@@ -27,6 +31,7 @@ function flowerComp(): FlowerComp {
         setFlowerState(newState: number) {
             if (this.flowerState == 0) {
                 this.trigger("bloom")
+                this.flowerScale = 0
             }
             this.flowerState = newState
         },
@@ -37,6 +42,14 @@ function flowerComp(): FlowerComp {
         },
         update() {
             this.flowerState = Math.max(0, this.flowerState - dt())
+            if (this.flowerState > 0)
+            {
+                this.flowerScale = Math.min(this.flowerScale + dt(), 1)
+            }
+            else
+            {
+                this.flowerScale = Math.max(this.flowerScale - dt(), 0)
+            }
             this.area.scale = this.flowerState > 0 ? 1.25 : 0.5;
 
             if (this.evolveState != 0)
@@ -54,9 +67,9 @@ function flowerComp(): FlowerComp {
         },
         draw() {0
             if (this.flowerState > 0) {
-                const scal = Math.min(100, this.flowerState * 50)
-                drawSprite({sprite: "flower", anchor: "center", width: scal, height: scal})
-                //this.scale = this.flowerState > 0 ? 2 : 1;
+                this.flowerScale = Math.min(this.flowerScale, this.flowerState / 2)
+                const scal = Math.max(Math.min(100, this.flowerScale * 100), 0.1)
+                drawSprite({pos: this.direction.unit().scale((scal - 100) / 5), sprite: "flower", anchor: "center", width: scal, height: scal})
             }
         }
     };
@@ -68,12 +81,12 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
     
     let flower = add([
         area(),
-        scale(0.75),
+        scale(0.85),
         sprite("bud"),
         anchor("center"),
         pos(border.toWorld(position)),
         rotate(rotation),
-        flowerComp(),
+        flowerComp(flowerDirection),
         "flower"
     ]);
     flower.onCollide("pollen", () => {

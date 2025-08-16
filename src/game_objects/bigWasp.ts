@@ -5,11 +5,11 @@ import {
 } from "../main";
 
 const PATIENCE_VAL = 6;
-const WASP_MOVE_SPEED = 100;
+const WASP_MOVE_SPEED = 200;
 const WASP_HEALTH = 40;
 const WASP_ROTATE_SPEED = 100;
 const WASP_SIDE_ROT = 20;
-const WASP_DASH_DISTANCE = 150;
+const WASP_DASH_DISTANCE = 250;
 const WASP_HEIGHT_VARIANCE = 100;
 // Wasp Object
 
