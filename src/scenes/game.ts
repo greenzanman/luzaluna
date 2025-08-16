@@ -101,10 +101,16 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
-        // Bump event listener
+        // Bump event listener with debounce
+        let bumpCooldown = 0;
+        const BUMP_DEBOUNCE = 0.3; // seconds
+
         on("bump", "*", () => {
-            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
-            bumpCount.increaseBumps();
+            if (bumpCooldown <= 0) {
+                ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
+                bumpCount.increaseBumps();
+                bumpCooldown = BUMP_DEBOUNCE;
+            }
         })
 
         on("death", "wasp", () => {
@@ -269,6 +275,9 @@ export function mountGameScene() {
             // If player not shooting, smoothly snap aim direction to target
             if (playerShot == false)
                     aimDirection = aimDirection.lerp(rawTargetDirection, lerpAimFactor).unit();
+
+            // Update bump cooldown
+            bumpCooldown = Math.max(bumpCooldown - dt(), 0);
 
             CreateEnemies()
 
