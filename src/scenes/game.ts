@@ -52,12 +52,18 @@ export function getDt(playerObj: GameObj<PlayerComp>): number {
 
 export function mountGameScene() {
     scene("game", (bestScore: number) => {
+        let script = ""
+        let scriptIdx = 0
+        const beeScriptAsset = loadJSON("beeScript", "beeMovie.json")
         loadSound("death", "explosion.mp3")
         loadSound("hurt", "explosion2.mp3")
         loadSound("shoot", "pew.mp3")
         loadSound("waspDeath", "burst.mp3")
         loadSound("bloom", "pluck.mp3")
         loadSound("music", "music2.mp3")
+        beeScriptAsset.onLoad(() => {
+            script = beeScriptAsset.data.script.split(" ")
+        })
         const music = play("music", {loop: true})
         let stats: Stats = {
             time: 0,
@@ -118,6 +124,14 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
+        const beeMovieText = add([
+                text(""),
+                scale(1),
+                pos(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                anchor("center"),
+                color(220, 202, 105)
+            ])
+
         // Bump event listener with debounce
         let bumpCooldown = 0;
         const BUMP_DEBOUNCE = 0.3; // seconds
@@ -128,6 +142,8 @@ export function mountGameScene() {
                 ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
                 stats.bumps++
                 bumpCooldown = BUMP_DEBOUNCE;
+                debug.log(script[scriptIdx])
+                beeMovieText.text = script[scriptIdx++]
             }
         })
 
