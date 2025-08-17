@@ -30,6 +30,13 @@ export const WASP_SPEED = 40
 
 export const INVUL_DURATION = 2
 
+export const COLOR_AR = 86
+export const COLOR_AG = 72
+export const COLOR_AB = 63
+export const COLOR_BR = 220
+export const COLOR_BG = 202
+export const COLOR_BB = 105
+
 // TODO: Add scoreboard
 // TODO: Add arrow cursor to aim
 // TODO: Add current players velocity on top of pollen velocity?
@@ -38,7 +45,6 @@ export const INVUL_DURATION = 2
 // TODO: Fix double bump count?
 // TODO: Fix issue where shots not registering when clicking off of the game screen.
 
-
 const game: HTMLElement = document.getElementById("game");
 
 kaplay({
@@ -46,7 +52,8 @@ kaplay({
     height: SCREEN_HEIGHT,
     letterbox: true,
     debugKey: "0",
-    root: game
+    root: game,
+
 });
 
 loadRoot("./"); // A good idea for Itch.io publishing later

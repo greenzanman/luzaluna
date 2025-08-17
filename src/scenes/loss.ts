@@ -1,8 +1,8 @@
-import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH} from "../main"
+import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED, POLLEN_SPEED, POLLEN_PUSH, COLOR_BR, COLOR_BG, COLOR_BB, COLOR_AR, COLOR_AG, COLOR_AB} from "../main"
 import {Stats} from "./game"
 
 export function mountLossScene() {
-    setBackground(75, 75, 75)
+    setBackground(color(COLOR_AR, COLOR_AG, COLOR_AB).color)
     scene("loss", (stats: Stats, bestScore: number) => {
         loadSound("start", "twee.mp3")
         loadSound("type", "type.mp3")
@@ -36,7 +36,7 @@ Score:${score}
             text(""),
             pos(textPos),
             scale(.75),
-            color(220, 202, 105)
+            color(COLOR_BR, COLOR_BG, COLOR_BB)
         ]);
 
 
@@ -45,15 +45,15 @@ Score:${score}
             pos(textPos.add(vec2(200, 335))),
             area(),
             anchor("center"),
-            outline(4, color(220, 202, 105).color),
-            color(75, 75, 75)
+            outline(4, color(COLOR_BR, COLOR_BG, COLOR_BB).color),
+            color(COLOR_AR, COLOR_AG, COLOR_AB)
         ])
 
         retryBtn.add([
             text("Retry"),
             pos(0),
             anchor("center"),
-            color(220, 202, 105),
+            color(COLOR_BR, COLOR_BG, COLOR_BB),
             "text"
         ])
 
@@ -65,15 +65,15 @@ Score:${score}
 
         retryBtn.onHover(() => {
             play("hover", {volume: .5})
-            retryBtn.color = color(220, 202, 105).color
-            retryBtn.outline.color = color(75, 75, 75).color
-            retryBtn.get("text")[0].color = color(75, 75, 75).color
+            retryBtn.color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
+            retryBtn.outline.color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
+            retryBtn.get("text")[0].color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
         });
 
         retryBtn.onHoverEnd(() => {
-            retryBtn.color = color(75, 75, 75).color
-            retryBtn.outline.color = color(220, 202, 105).color
-            retryBtn.get("text")[0].color = color(220, 202, 105).color
+            retryBtn.color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
+            retryBtn.outline.color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
+            retryBtn.get("text")[0].color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
         });
 
         const menuBtn = add([
@@ -81,15 +81,15 @@ Score:${score}
             pos(textPos.add(vec2(200, 400))),
             area(),
             anchor("center"),
-            outline(4, color(220, 202, 105).color),
-            color(75, 75, 75)
+            outline(4, color(COLOR_BR, COLOR_BG, COLOR_BB).color),
+            color(COLOR_AR, COLOR_AG, COLOR_AB)
         ])
 
         menuBtn.add([
             text("Back to Menu"),
             pos(0),
             anchor("center"),
-            color(220, 202, 105),
+            color(COLOR_BR, COLOR_BG, COLOR_BB),
             "text"
         ])
 
@@ -101,15 +101,15 @@ Score:${score}
 
         menuBtn.onHover(() => {
             play("hover", {volume: .5})
-            menuBtn.color = color(220, 202, 105).color
-            menuBtn.outline.color = color(75, 75, 75).color
-            menuBtn.get("text")[0].color = color(75, 75, 75).color
+            menuBtn.color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
+            menuBtn.outline.color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
+            menuBtn.get("text")[0].color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
         });
 
         menuBtn.onHoverEnd(() => {
-            menuBtn.color = color(75, 75, 75).color
-            menuBtn.outline.color = color(220, 202, 105).color
-            menuBtn.get("text")[0].color = color(220, 202, 105).color
+            menuBtn.color = color(COLOR_AR, COLOR_AG, COLOR_AB).color
+            menuBtn.outline.color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
+            menuBtn.get("text")[0].color = color(COLOR_BR, COLOR_BG, COLOR_BB).color
         });
 
 
@@ -118,7 +118,7 @@ Score:${score}
                     scale(1),
                     pos(textPos.add(vec2(675, 80))),
                     anchor("center"),
-                    color(220, 202, 105)
+                    color(COLOR_BR, COLOR_BG, COLOR_BB)
                 ])
 
         const ratingText = add([
@@ -126,7 +126,7 @@ Score:${score}
                     scale(3),
                     pos(textPos.add(vec2(675, 150))),
                     anchor("center"),
-                    color(220, 202, 105)
+                    color(COLOR_BR, COLOR_BG, COLOR_BB)
                 ])
 
         let i = 0

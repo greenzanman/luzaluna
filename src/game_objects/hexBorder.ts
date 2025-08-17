@@ -28,6 +28,6 @@ export function createHexBorder(position: Vec2, width: number, height:number, ou
         hexBorderComp(),
         pos(position),
         polygon(points2, {fill: false}),
-        outline(out, color(220, 202, 105).color),
+        outline(out, color(220, 202, 105).color, 0),
     ])
 } 

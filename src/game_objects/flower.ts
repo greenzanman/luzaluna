@@ -104,8 +104,8 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
             if (this.flowerState > 0) {
                 this.flowerScale = Math.min(this.flowerScale, this.flowerState / MAX_FLOWER_STATE)
                 let scal = Math.max(Math.min(1, this.flowerScale), 0.0001)
-                scal = Math.sqrt(scal) * 100;
-                drawSprite({pos: vec2(0, (100 - scal) / 5), sprite: "flower", anchor: "center", width: scal, height: scal})
+                scal = Math.sqrt(scal) * 120;
+                drawSprite({pos: vec2(0, (100 - scal) / 5 + 10), sprite: "flowerSheet", frame: 6, anchor: "center", width: scal, height: scal})
             }
         }
     };
@@ -117,8 +117,8 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
     
     let flower = add([
         area(),
-        scale(0.85),
-        sprite("bud"),
+        scale(0.73),
+        sprite("flowerSheet", {frame: 0}),
         anchor("center"),
         pos(border.toWorld(position)),
         rotate(rotation),
