@@ -42,19 +42,20 @@ Score:${score}
 
 
         const retryBtn = add([
-            rect(350, 50, {fill: false}),
+            rect(350, 50),
             pos(textPos.add(vec2(200, 335))),
             area(),
             anchor("center"),
             outline(4, color(220, 202, 105).color),
-            
+            color(75, 75, 75)
         ])
 
         retryBtn.add([
             text("Retry"),
             pos(0),
             anchor("center"),
-            color(220, 202, 105)
+            color(220, 202, 105),
+            "text"
         ])
 
         retryBtn.onClick(() => {
@@ -65,22 +66,32 @@ Score:${score}
 
         retryBtn.onHover(() => {
             play("hover", {volume: .5})
+            retryBtn.color = color(220, 202, 105).color
+            retryBtn.outline.color = color(75, 75, 75).color
+            retryBtn.get("text")[0].color = color(75, 75, 75).color
+        });
+
+        retryBtn.onHoverEnd(() => {
+            retryBtn.color = color(75, 75, 75).color
+            retryBtn.outline.color = color(220, 202, 105).color
+            retryBtn.get("text")[0].color = color(220, 202, 105).color
         });
 
         const menuBtn = add([
-            rect(350, 50, {fill: false}),
+            rect(350, 50),
             pos(textPos.add(vec2(200, 400))),
             area(),
             anchor("center"),
             outline(4, color(220, 202, 105).color),
-            color(220, 202, 105)
+            color(75, 75, 75)
         ])
 
         menuBtn.add([
             text("Back to Menu"),
             pos(0),
             anchor("center"),
-            color(220, 202, 105)
+            color(220, 202, 105),
+            "text"
         ])
 
         menuBtn.onClick(() => {
@@ -91,7 +102,17 @@ Score:${score}
 
         menuBtn.onHover(() => {
             play("hover", {volume: .5})
+            menuBtn.color = color(220, 202, 105).color
+            menuBtn.outline.color = color(75, 75, 75).color
+            menuBtn.get("text")[0].color = color(75, 75, 75).color
         });
+
+        menuBtn.onHoverEnd(() => {
+            menuBtn.color = color(75, 75, 75).color
+            menuBtn.outline.color = color(220, 202, 105).color
+            menuBtn.get("text")[0].color = color(220, 202, 105).color
+        });
+
 
         const ratingAnoteText = add([
                     text(""),

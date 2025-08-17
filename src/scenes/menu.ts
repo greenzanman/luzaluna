@@ -26,7 +26,8 @@ export function mountMenuScene() {
             text("START"),
             pos(0),
             anchor("center"),
-            color(220, 202, 105)
+            color(220, 202, 105),
+            "text"
         ])
 
         startBtn.onClick(() => {
@@ -37,6 +38,15 @@ export function mountMenuScene() {
 
         startBtn.onHover(() => {
             play("hover", {volume: .5})
+            startBtn.color = color(220, 202, 105).color
+            startBtn.outline.color = color(75, 75, 75).color
+            startBtn.get("text")[0].color = color(75, 75, 75).color
+        });
+
+        startBtn.onHoverEnd(() => {
+            startBtn.color = color(75, 75, 75).color
+            startBtn.outline.color = color(220, 202, 105).color
+            startBtn.get("text")[0].color = color(220, 202, 105).color
         });
     })
 }
