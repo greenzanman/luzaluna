@@ -54,7 +54,7 @@ export function mountGameScene() {
     scene("game", (bestScore: number) => {
         let script = ""
         let scriptIdx = 0
-        const beeScriptAsset = loadJSON("beeScript", "beeMovie.json")
+        const beeScriptAsset = loadJSON("beeScript", "beeMovieQuote.json")
         loadSound("death", "explosion.mp3")
         loadSound("hurt", "explosion2.mp3")
         loadSound("shoot", "pew.mp3")
@@ -143,7 +143,10 @@ export function mountGameScene() {
                 stats.bumps++
                 bumpCooldown = BUMP_DEBOUNCE;
                 debug.log(script[scriptIdx])
-                beeMovieText.text = script[scriptIdx++]
+                if(scriptIdx < script.length) {
+                    beeMovieText.text = script[scriptIdx++]
+                }
+                
             }
         })
 
