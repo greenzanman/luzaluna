@@ -1,4 +1,4 @@
-import type { Comp, Vec2, GameObj} from "kaplay";
+import type { Comp, Vec2, GameObj, AudioPlay} from "kaplay";
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
 import {PlayerComp} from "./player"
 import { createWasp } from "./wasp";
@@ -16,6 +16,7 @@ export interface FlowerComp extends Comp {
     shakeTimer: number;
     direction: Vec2;
     player: GameObj<PlayerComp>;
+    buildUp: AudioPlay | null
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
     addFlowerState: (addState: number) => void;
@@ -34,6 +35,7 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
         direction: newDirection,
         require: ["pos"],
         player: newPlayer,
+        buildUp: null,
         getFlowerState(): number {
             return this.flowerState;
         },
@@ -59,6 +61,7 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
         evolve() {
             this.evolveState = 1;
             this.evolveTimer = 4;
+            this.buildUp =  play("buildUp", {volume: .4})
         },
         update() {
             let curDt = getDt(this.player)
@@ -82,6 +85,7 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
                     this.angle = this.baseRotation
                     this.flowerState = MAX_FLOWER_STATE
                     this.flowerScale = 1
+                    this.buildUp.stop()
                     this.trigger("explode", this.worldPos(), this.direction)
                 }
                 else

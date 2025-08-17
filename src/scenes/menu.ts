@@ -52,10 +52,12 @@ export function mountMenuScene() {
 
         // Load here rather than on game start
         loadSound("death", "explosion.mp3")
-        loadSound("hurt", "explosion2.mp3")
+        loadSound("hurt", "explosion3.mp3")
+        loadSound("explode", "explosion2.mp3")
         loadSound("shoot", "pew.mp3")
         loadSound("waspDeath", "burst.mp3")
         loadSound("bloom", "pluck.mp3")
+        loadSound("buildUp", "buildup.mp3")
         loadSound("music", "music2.mp3")
         loadSound("loss", "beeutiful misery.mp3")
         loadSound("wasp", "mosquito.mp3")

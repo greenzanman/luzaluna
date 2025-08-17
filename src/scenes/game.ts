@@ -193,6 +193,7 @@ export function mountGameScene() {
         })
 
         on("explode", "flower", (flower) => {
+            play("explode")
             let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
             timeRatio = Math.min(timeRatio, RAMP_MAX)
             for (let i = 0; i < rand(1 + timeRatio / 2, 1 + timeRatio); i++)
