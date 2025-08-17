@@ -11,6 +11,7 @@ const WASP_HEALTH = 25;
 const WASP_ROTATE_SPEED = 100;
 const WASP_SIDE_ROT = 20;
 const WASP_DASH_DISTANCE = 250;
+const WINDUP_LENGTH = 0.4
 const WASP_HEIGHT_VARIANCE = 100;
 // Wasp Object
 
@@ -141,10 +142,16 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     speed *= 2
                     break;
                 case 2:
-                    this.angle = rand(-20, 20)
-                    let movement = this.worldPos().sub(this.target.worldPos())
-                    movement = movement.unit().scale(speed / 3)
+                    if (this.patience < WINDUP_LENGTH)
+                    {
+                        let movement = this.worldPos().sub(this.target.worldPos())
+                        movement = movement.unit().scale(speed)
                     this.moveBy(movement)
+                    }    
+                    else
+                    {
+                        this.angle = rand(-20, 20)
+                    }
                     break;
                 case 3:
                     speed *= 3
