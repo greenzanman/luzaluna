@@ -142,7 +142,6 @@ export function mountGameScene() {
                 ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
                 stats.bumps++
                 bumpCooldown = BUMP_DEBOUNCE;
-                debug.log(script[scriptIdx])
                 if(scriptIdx < script.length) {
                     beeMovieText.text = script[scriptIdx++]
                 }
@@ -185,8 +184,6 @@ export function mountGameScene() {
 
             // Emit particles
             player.emitParticles(10)
-
-            debug.log("HP: " + player.hp())
 
             if(player.hp() <= 0) {
                 stats.time = customTimer.getTime()
