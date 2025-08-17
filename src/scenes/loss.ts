@@ -5,9 +5,8 @@ export function mountLossScene() {
     setBackground(75, 75, 75)
     scene("loss", (stats: Stats, bestScore: number) => {
         loadSound("start", "twee.mp3")
-        loadSound("music", "beeutiful misery.mp3")
         loadSound("type", "type.mp3")
-        const music = play("music", {loop: true})
+        const music = play("loss", {loop: true})
         const textPos = center();
         textPos.y -= 200
         textPos.x -= 450

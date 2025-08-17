@@ -8,6 +8,7 @@ export function mountMenuScene() {
         loadSound("start", "twee.mp3")
         loadSound("hover", "twee2.mp3")
         loadSprite("title", "title.png")
+        loadSound("type", "type.mp3")
         const beeSound = play("bees", {loop: true})
         add([
             sprite("title", {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}),
@@ -56,6 +57,7 @@ export function mountMenuScene() {
         loadSound("waspDeath", "burst.mp3")
         loadSound("bloom", "pluck.mp3")
         loadSound("music", "music2.mp3")
+        loadSound("loss", "beeutiful misery.mp3")
         loadSound("wasp", "mosquito.mp3")
         
         loadSprite("sparkSheet", "sparkSheet.png", {
