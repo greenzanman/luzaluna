@@ -1,5 +1,6 @@
 import type { Comp, GameObj, Vec2 } from "kaplay";
 import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} from "../main"
+import { getDt } from "../scenes/game";
 
 const MAX_PLAYER_SPEED = 800; 
 
@@ -57,16 +58,16 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         require: ["health"],
         invulTimer: 0,
         update() {
-            this.velocity.y += GRAVITY * dt();
-            this.moveBy(this.velocity.scale(dt()));
+            this.velocity.y += GRAVITY * getDt(this);
+            this.moveBy(this.velocity.scale(getDt(this)));
 
             // Clamp velocity to max speed
             if (this.velocity.len() > MAX_PLAYER_SPEED) {
                 this.velocity = this.velocity.unit().scale(MAX_PLAYER_SPEED);
             }
         
-            this.invulTimer = Math.max(0, this.invulTimer - dt());
-            this.rotateBy(this.angVelocity * dt())
+            this.invulTimer = Math.max(0, this.invulTimer - getDt(this));
+            this.rotateBy(this.angVelocity * getDt(this))
         },
         setVelocity(newVelocity: Vec2) {
             this.velocity = newVelocity  

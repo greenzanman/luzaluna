@@ -1,6 +1,7 @@
 import type { Comp, Vec2, GameObj, PosComp, HealthComp } from "kaplay";
 import {WASP_SPEED} from "../main";
 import { PlayerComp } from "./player";
+import { getDt } from "../scenes/game";
 
 // Wasp Object
 const DEC_SPEED = 50
@@ -21,15 +22,15 @@ function waspComp(target: GameObj<PosComp>, newAggression: number, startVelocity
         update() {
             console.log(this.worldPos())
             let dir = target.worldPos().sub(this.worldPos()).unit()
-            this.moveBy(dir.scale(WASP_SPEED * dt() * this.aggression))
-            this.moveBy(this.velocity.scale(dt()))
-            if (this.velocity.len() < dt() * DEC_SPEED)
+            this.moveBy(dir.scale(WASP_SPEED * getDt(this.target) * this.aggression))
+            this.moveBy(this.velocity.scale(getDt(this.target)))
+            if (this.velocity.len() < getDt(this.target) * DEC_SPEED)
             {
                 this.velocity = vec2(0, 0)
             }
             else
             {
-                this.velocity = this.velocity.sub(this.velocity.unit().scale(DEC_SPEED * dt()))
+                this.velocity = this.velocity.sub(this.velocity.unit().scale(DEC_SPEED * getDt(this.target)))
             }
         }
     }

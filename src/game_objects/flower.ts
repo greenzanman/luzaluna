@@ -2,6 +2,7 @@ import type { Comp, Vec2, GameObj} from "kaplay";
 import {SCREEN_WIDTH, SCREEN_HEIGHT, FLOWER_SPACING, GRAVITY, BUMP_SPEED} from "../main"
 import {PlayerComp} from "./player"
 import { createWasp } from "./wasp";
+import { getDt } from "../scenes/game";
 
 const MAX_FLOWER_STATE = 5
 // Flower object
@@ -13,13 +14,14 @@ export interface FlowerComp extends Comp {
     flowerScale: number;
     baseRotation: number;
     direction: Vec2;
+    player: GameObj<PlayerComp>;
     getFlowerState: () => number;
     setFlowerState: (newState: number) => void;
     addFlowerState: (addState: number) => void;
     evolve: () => void;
 }
 
-function flowerComp(newDirection: Vec2, startRotation: number): FlowerComp {
+function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameObj<PlayerComp>): FlowerComp {
     return {
         id: "flowerComp",
         flowerState: 0,
@@ -29,6 +31,7 @@ function flowerComp(newDirection: Vec2, startRotation: number): FlowerComp {
         baseRotation: startRotation,
         direction: newDirection,
         require: ["pos"],
+        player: newPlayer,
         getFlowerState(): number {
             return this.flowerState;
         },
@@ -56,20 +59,20 @@ function flowerComp(newDirection: Vec2, startRotation: number): FlowerComp {
             this.evolveTimer = 4;
         },
         update() {
-            this.flowerState = Math.max(0, this.flowerState - dt())
+            this.flowerState = Math.max(0, this.flowerState - getDt(this.player))
             if (this.flowerState > 0)
             {
-                this.flowerScale = Math.min(this.flowerScale + dt() * 2, 1)
+                this.flowerScale = Math.min(this.flowerScale + getDt(this.player) * 2, 1)
             }
             else
             {
-                this.flowerScale = Math.max(this.flowerScale - dt(), 0)
+                this.flowerScale = Math.max(this.flowerScale - getDt(this.player), 0)
             }
             this.area.scale = this.flowerState > 0 ? 1.25 : 0.5;
 
             if (this.evolveState != 0)
             {
-                this.evolveTimer = Math.max(0, this.evolveTimer - dt())
+                this.evolveTimer = Math.max(0, this.evolveTimer - getDt(this.player))
                 if (this.evolveTimer <= 0)
                 {
                     this.evolveState = 0
@@ -95,9 +98,6 @@ function flowerComp(newDirection: Vec2, startRotation: number): FlowerComp {
 export function createFlower(position: Vec2, flowerDirection: Vec2, player: GameObj<PlayerComp>,
     border: GameObj, rotation: number
 ) {
-    loadSprite("bud", "BUD.png");
-    loadSprite("flower", "FLOWER.png");
-    loadSound("boing", "boing.mp3")
     
     let flower = add([
         area(),
@@ -106,7 +106,7 @@ export function createFlower(position: Vec2, flowerDirection: Vec2, player: Game
         anchor("center"),
         pos(border.toWorld(position)),
         rotate(rotation),
-        flowerComp(flowerDirection, rotation),
+        flowerComp(flowerDirection, rotation, player),
         "flower"
     ]);
     flower.onCollide("pollen", () => {
