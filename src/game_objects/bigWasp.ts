@@ -141,7 +141,10 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     speed *= 2
                     break;
                 case 2:
-                    this.angle += getDt(this.target) * 120
+                    this.angle = rand(-20, 20)
+                    let movement = this.worldPos().sub(this.target.worldPos())
+                    movement = movement.unit().scale(speed / 3)
+                    this.moveBy(movement)
                     break;
                 case 3:
                     speed *= 3
