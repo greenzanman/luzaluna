@@ -28,7 +28,6 @@ import {createCustomTimer} from "../game_objects/timer"
 
 import {createBumpCount} from "../game_objects/bumpCount"
 import { createWasp } from "../game_objects/wasp"
-import { rightCrosses } from "../extras/polygon"
 import { createBigWasp } from "../game_objects/bigWasp"
 import { GameObj } from "kaplay"
 
@@ -63,16 +62,17 @@ export function mountGameScene() {
         const arrow = createArrow(player)
         let mousePressed = false
 
-        const rect = canvas.getBoundingClientRect();
         const borderWidth = SCREEN_WIDTH - PADDING_HORIZ * 2
         const borderHeight = SCREEN_HEIGHT - PADDING_VERT * 2
-        const borderPos = vec2(rect.width / 2 - borderWidth / 2, rect.height / 2 - borderHeight / 2)
+        const borderPos = vec2(SCREEN_WIDTH / 2 - borderWidth / 2, SCREEN_HEIGHT / 2 - borderHeight / 2)
         const center = vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         const hex = createHexBorder(borderPos, borderWidth, borderHeight, BORDER_THICKNESS)
 
         const segments = hex.pts.map((pt, i, arr) => [pt, arr[(i + 1) % arr.length]]);
 
         //For each segment interpolate the flowers along the segment.
+        loadSprite("bud", "BUD.png");
+        loadSprite("flower", "FLOWER.png");
         const flowers: GameObj<FlowerComp>[] = [];
         segments.forEach(([start, end], i) => {
             const dx = end.x - start.x;
@@ -84,9 +84,8 @@ export function mountGameScene() {
             // Angle of the normal vector (in radians)
             const angle = rad2deg(Math.atan2(ny, nx));
 
-            const flowerType = i
             Array.from({ length: FLOWER_SPACING }).forEach((_, j) => {
-                const position = vec2(lerp(start.x, end.x, j / FLOWER_SPACING),lerp(start.y, end.y, j / FLOWER_SPACING));
+                const position = vec2(lerp(start.x, end.x, (j + 0.5) / FLOWER_SPACING),lerp(start.y, end.y, (j + 0.5) / FLOWER_SPACING));
                 flowers.push(createFlower(position, vec2((end.y - start.y), -(end.x-start.x)), player, hex, angle - 90));
             });
         });
@@ -108,11 +107,17 @@ export function mountGameScene() {
             createHeart(HEART_SPACING / 2 + i, HEART_SPACING / 2, 4, color(220, 202, 105).color, healthBar)
         }
 
-        // Bump event listener
+        // Bump event listener with debounce
+        let bumpCooldown = 0;
+        const BUMP_DEBOUNCE = 0.3; // seconds
+
         on("bump", "*", () => {
-            ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
             //bumpCount.increaseBumps();
-            stats.bumps++
+            if (bumpCooldown <= 0) {
+                ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
+                stats.bumps++
+                bumpCooldown = BUMP_DEBOUNCE;
+            }
         })
 
         on("death", "wasp", () => {
@@ -120,9 +125,12 @@ export function mountGameScene() {
             play("waspDeath", {volume: .25})
         })
 
+        let waspPresent = false
         on("death", "bigWasp", () => {
             stats.bigWasp_kills++
             play("waspDeath", {volume: .25})
+            waspPresent = false
+            
         })
 
         on("bloom", "flower", () => {
@@ -130,6 +138,15 @@ export function mountGameScene() {
             play("bloom")
         })
 
+        on("explode", "flower", (flower) => {
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
+            timeRatio = Math.min(timeRatio, RAMP_MAX)
+            for (let i = 0; i < rand(1 + timeRatio / 2, 1 + timeRatio); i++)
+            {
+                createWasp(flower.worldPos(), player, stats, 0, flower.direction.unit().scale(80)
+                    .add(vec2(rand(-80, 80), rand(-80, 80))))
+            }
+        })
 
         // Decreases health when player gets hurt.
         player.onHurt((damage) => {
@@ -139,7 +156,7 @@ export function mountGameScene() {
             // Emit particles
             player.emitParticles(10)
 
-            debug.log(player.hp())
+            debug.log("HP: " + player.hp())
 
             if(player.hp() <= 0) {
                 stats.time = customTimer.getTime()
@@ -162,16 +179,21 @@ export function mountGameScene() {
         })
 
         let waspPatience = 5
+        const RAMP_START = 15
+        const RAMP_RATE = 30
+        const RAMP_MAX = 2
         function CreateEnemies() {
-            waspPatience -= dt()
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
+            waspPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
             if (waspPatience < 0)
             {
                 let spawnLoc = vec2(SCREEN_WIDTH / 2, - 50)
                 let type = Math.floor(rand(9) / 2)
-                if (type == 4) // TODO: improve spawning
+                if (type == 4 && timeRatio > 0 && (!waspPresent || timeRatio > 4)) // TODO: improve spawning
                 {
-                    waspPatience += 30
+                    waspPatience += 15
                     createBigWasp(spawnLoc, player,center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT), stats);
+                    waspPresent = true
                 }
                 else {
                     switch (type)
@@ -189,31 +211,50 @@ export function mountGameScene() {
                             spawnLoc = vec2(rand(SCREEN_WIDTH), SCREEN_HEIGHT)
                             break;
                     }
-                    waspPatience += rand(1, 3)
-                    createWasp(spawnLoc, player, stats)
+                    waspPatience += rand(3, 6)
+                    createWasp(spawnLoc, player, stats, timeRatio, vec2(0, 0))
                 }
             }
         }
     
-        let flowerPatience = 10
+        let flowerPatience = 2
         function createFlowers() {
-            flowerPatience -= dt()
+            let timeRatio = Math.max(customTimer.getTime() - RAMP_START + 5, 0) / RAMP_RATE
+            if (timeRatio > 0)
+                flowerPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
             if (flowerPatience < 0)
             {
                 let gottenFlower = flowers[Math.floor(rand(flowers.length))]
-                gottenFlower.evolve();
-                flowerPatience += rand(6, 14)
+                if (gottenFlower.getFlowerState() == 0)
+                {
+                    gottenFlower.evolve();
+                    flowerPatience += rand(8, 14);
+                }
+                else
+                {
+                    flowerPatience += 0.2
+                }
             }
         }
 
         let pollenDelay = 0
-        const POLLEN_DELAY = 0.05
-        let inaccuracy = 0
-        const INACCURACY_FLOOR = 0.5
-        const INACCURACY_COEF = 100
+        let shootingDuration = 0
+        const POLLEN_DELAY = 0.04
+        const INACCURACY_FLOOR = 0
+        const INACCURACY_MAX = 0.2
+
+        // Shared aim direction
+        let aimDirection = vec2(0, 0);
 
         // Tick function
         onUpdate(() => {
+            
+            // Calculate target direction
+            const rawTargetDirection = mousePos().sub(player.worldPos()).scale(1).unit();
+            // Lerp factor: higher = faster snap, lower = smoother
+            const lerpAimFactor = 0.15;
+            let playerShot = false;
+
             // QOL click and hold
             if (isMousePressed())
             {
@@ -225,33 +266,79 @@ export function mountGameScene() {
             {
                 if (ammoCount.GetAmmo() >= 1)
                 {
+                    shootingDuration += dt();
+                    
                     if (pollenDelay == 0) {
-                    //let dir = mousePos().sub(player.worldPos()).unit()
-                        pollenDelay = POLLEN_DELAY
-                        let dir = mousePos().sub(player.worldPos()).scale(-1).unit()
-                        ammoCount.DecreaseAmmo(1)
-                        let inaccuracyVal = Math.max(inaccuracy - INACCURACY_FLOOR, 0) * INACCURACY_COEF
+                        const ammo = ammoCount.GetAmmo();
+                        const ammoRatio = ammo / POLLEN_CAPACITY;
+
+                        pollenDelay = POLLEN_DELAY;
+
+                        ammoCount.DecreaseAmmo(1);
+
+                        let lerpFactor = Math.min(shootingDuration / 1.5, 1); // 1.5 seconds to reach max inaccuracy
+                        let inaccuracyVal = lerp(INACCURACY_FLOOR, INACCURACY_MAX, lerpFactor)
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
-                        createPollen(player.worldPos(), dir.scale(POLLEN_SPEED).add(inaccuracyOffset))
-                        player.push(dir.scale(-POLLEN_PUSH))
+
+                        aimDirection = rawTargetDirection.add(inaccuracyOffset);
+                        createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED))
+
+
+
+                        // Normal pollen push
+                        // player.push(aimDirection.scale(-POLLEN_PUSH));
+
+
+                        // Dynamic pollen push based on ammo
+                        const minPush = POLLEN_PUSH * 0.2;      // normal push at full ammo
+                        const maxPush = POLLEN_PUSH * 1;  // stronger push at zero ammo
+                        const pushStrength = lerp(minPush, maxPush, 1 - ammoRatio);
+                        player.push(aimDirection.scale(-pushStrength))
+                        // if (ammoCount.GetAmmo() < POLLEN_CAPACITY / 4) {
+                        //     player.push(aimDirection.scale(-POLLEN_PUSH));
+                        // }
+
+                        
+
                         stats.pollen_fired++
                         play("shoot", {volume: 0.25})
+
+                        playerShot = true;
                     }
                 }
                 else // Force release and reclick once out of pollen
                 {
                     mousePressed = false
+
+                    // if u want to have a cooldown on shooting after running out of pollen:
+                    // pollenDelay = 5
                 }
-                inaccuracy += dt()
+                
             }
             else
             {
-                inaccuracy = 0
+                // Player can nudge movement just a bit when not shooting
+                const downwardness = Math.max(aimDirection.y, 0); 
+                const pushMultiplier = lerp(1, 2.5, downwardness); 
+                player.push(aimDirection.scale(-POLLEN_PUSH / 90 * pushMultiplier));
+
+                // Reset shooting duration after mouse up
+                shootingDuration = 0;
             }
 
-            CreateEnemies()
+            // If player not shooting, smoothly snap aim direction to target
+            if (playerShot == false)
+                    aimDirection = aimDirection.lerp(rawTargetDirection, lerpAimFactor).unit();
 
+            // Update bump cooldown
+            bumpCooldown = Math.max(bumpCooldown - dt(), 0);
+
+            CreateEnemies()
+            createFlowers()
         });
+
+        // Pass aimDirection to arrowComp
+        arrow.aimDirection = () => aimDirection;
     });
 }
 

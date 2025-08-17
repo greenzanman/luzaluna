@@ -1,6 +1,7 @@
 import type { Comp, GameObj, Vec2 } from "kaplay";
 import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} from "../main"
 
+const MAX_PLAYER_SPEED = 800; 
 
 // Player Object
 export interface ArrowComp extends Comp {}
@@ -9,8 +10,10 @@ function arrowComp(player: GameObj): ArrowComp {
     return {
         id: "ArrowComp",
         update() {
-            this.pos = player.worldPos()
-            this.angle = mousePos().sub(player.worldPos()).unit().scale(-1).angle() - 90
+            // Use aimDirection if provided, otherwise fallback
+            const dir = this.aimDirection ? this.aimDirection() : mousePos().sub(player.worldPos()).unit().scale(-1);
+            this.pos = player.worldPos();
+            this.angle = dir.angle() - 90;
         },
     }
 }
@@ -34,7 +37,8 @@ export interface PlayerComp extends Comp {
     velocity: Vec2;
     angVelocity: number;
     invulTimer: number;
-    bump: (cause: Vec2, direction: Vec2) => void;
+    bump: (direction: Vec2, coef: number) => void;
+    bumpDirect: (cause: Vec2, coef: number) => void;
     setVelocity: (newVelocity: Vec2) => void;
     push: (dir: Vec2) => void;
     takedamage: (damage: number) => void;
@@ -55,6 +59,11 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         update() {
             this.velocity.y += GRAVITY * dt();
             this.moveBy(this.velocity.scale(dt()));
+
+            // Clamp velocity to max speed
+            if (this.velocity.len() > MAX_PLAYER_SPEED) {
+                this.velocity = this.velocity.unit().scale(MAX_PLAYER_SPEED);
+            }
         
             this.invulTimer = Math.max(0, this.invulTimer - dt());
             this.rotateBy(this.angVelocity * dt())
@@ -62,13 +71,16 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         setVelocity(newVelocity: Vec2) {
             this.velocity = newVelocity  
         },
-        bump(cause: Vec2, direction: Vec2) {
-            let offset = this.worldPos().sub(cause).unit();
+        bump(direction: Vec2, coef: number) {
             //this.velocity = this.velocity.add(vec2(offset.x * BUMP_SPEED, 0))
             let dirProj = direction.scale(this.velocity.dot(direction) / direction.len() / direction.len())
             this.velocity = this.velocity.sub(dirProj);
             //this.velocity = direction.unit().scale(BUMP_SPEED);
-            this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED));
+            this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED * coef));
+        },
+        bumpDirect(cause: Vec2, coef: number) {
+            let offset = this.worldPos().sub(cause).unit();
+            this.bump(offset, coef)
         },
         spin(coef: number) 
         {

@@ -1,12 +1,15 @@
 import type { Comp, Vec2, GameObj, PosComp, HealthComp } from "kaplay";
 import { PlayerComp } from "./player";
+import {
+    BUMP_SPEED,
+} from "../main";
 
 const PATIENCE_VAL = 6;
-const WASP_MOVE_SPEED = 100;
-const WASP_HEALTH = 40;
+const WASP_MOVE_SPEED = 150;
+const WASP_HEALTH = 25;
 const WASP_ROTATE_SPEED = 100;
 const WASP_SIDE_ROT = 20;
-const WASP_DASH_DISTANCE = 150;
+const WASP_DASH_DISTANCE = 250;
 const WASP_HEIGHT_VARIANCE = 100;
 // Wasp Object
 
@@ -33,7 +36,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
         require: ["pos", "rotate"],
         target: target,
         health: WASP_HEALTH,    
-        patience: PATIENCE_VAL,
+        patience: PATIENCE_VAL - 2,
         mode: 0, // 0 - idle, 1 - move to center, 2 - move to right, 3 - move to left, 4 - charging charge, 5 - charge
         state: 0, // 0 - move to center, 1 - move side to side, 2 - charging, 3 - charge
         moving: true,
@@ -189,7 +192,7 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
         pos(position),
         area(),
         rotate(),
-        rect(75, 75),
+        rect(50, 50),
         anchor("center"),
         bigWaspComp(player, center, dimensions),
         color(0.5, 0.5, 1),
@@ -202,6 +205,7 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
 
     wasp.onCollide("player", () => {
         player.takedamage(1);
+        player.bumpDirect(wasp.worldPos(), 0.3)
     });
     return wasp
 }
