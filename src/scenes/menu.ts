@@ -7,7 +7,7 @@ export function mountMenuScene() {
         loadSound("bees", "bees.mp3")
         loadSound("start", "twee.mp3")
         loadSound("hover", "twee2.mp3")
-        loadSprite("title", "title.png")
+        loadSprite("title", "TITLECARD.png")
         loadSound("type", "type.mp3")
         const beeSound = play("bees", {loop: true})
         add([
@@ -16,7 +16,7 @@ export function mountMenuScene() {
 
         const startBtn = add([
             rect(300, 50),
-            pos(textPos.add(vec2(0, 150))),
+            pos(textPos.add(vec2(0, 290))),
             area(),
             anchor("center"),
             color(COLOR_AR, COLOR_AG, COLOR_AB),
