@@ -31,6 +31,7 @@ import {createBumpCount} from "../game_objects/bumpCount"
 import { createWasp } from "../game_objects/wasp"
 import { createBigWasp } from "../game_objects/bigWasp"
 import { GameObj } from "kaplay"
+import { truncate } from "node:fs/promises"
 
 export type Stats = {
     time: number,
@@ -44,7 +45,7 @@ export type Stats = {
 export function getDt(playerObj: GameObj<PlayerComp>): number {
     if (playerObj != null)
     {
-        return dt() / (1 + playerObj.invulTimer / INVUL_DURATION * 3)
+        return dt() * playerObj.getDilation()
     }
     return dt()
 
@@ -55,12 +56,36 @@ export function mountGameScene() {
         let script = ""
         let scriptIdx = 0
         const beeScriptAsset = loadJSON("beeScript", "beeMovieQuote.json")
-        loadSound("death", "explosion.mp3")
-        loadSound("hurt", "explosion2.mp3")
-        loadSound("shoot", "pew.mp3")
-        loadSound("waspDeath", "burst.mp3")
-        loadSound("bloom", "pluck.mp3")
-        loadSound("music", "music2.mp3")
+        // loadSound("death", "explosion.mp3")
+        // loadSound("hurt", "explosion2.mp3")
+        // loadSound("shoot", "pew.mp3")
+        // loadSound("waspDeath", "burst.mp3")
+        // loadSound("bloom", "pluck.mp3")
+        // loadSound("music", "music2.mp3")
+        
+        // loadSprite("sparkSheet", "sparkSheet.png", {
+        //     sliceX: 4,
+        //     sliceY: 3,
+        // })
+        // loadSprite("swirl", "swirl.png")
+        // loadSprite("pollen", "pollen.png")
+        // loadSprite("beeSheet", "beeSheet.png", {
+        //     sliceX: 4,
+        //     sliceY: 2,
+        //     anims: {
+        //         beeFly: { from: 0, to: 0},
+        //         beeTumble: { from: 1, to: 6, loop: true}
+        //     }
+        // })
+        // loadSprite("heartEmpty", "heartEmpty.png")
+        // loadSprite("heartFull", "heartFull.png")
+        // loadSprite("smallWasp", "smallWasp.png", {
+        //     sliceX: 2,
+        //     anims: {
+        //         waspFly: { from: 0, to: 1, loop: true}
+        //     }
+        // })
+
         beeScriptAsset.onLoad(() => {
             script = beeScriptAsset.data.script.split(" ")
         })
@@ -139,7 +164,7 @@ export function mountGameScene() {
         on("bump", "*", () => {
             //bumpCount.increaseBumps();
             if (bumpCooldown <= 0) {
-                ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 3);
+                ammoCount.IncreaseAmmo(POLLEN_CAPACITY / 2);
                 stats.bumps++
                 bumpCooldown = BUMP_DEBOUNCE;
                 if(scriptIdx < script.length) {
@@ -215,8 +240,8 @@ export function mountGameScene() {
             if (waspPatience < 0)
             {
                 let spawnLoc = vec2(SCREEN_WIDTH / 2, - 50)
-                let type = Math.floor(rand(9) / 2)
-                if (type == 4 && timeRatio > 0 && (!waspPresent || timeRatio > 4)) // TODO: improve spawning
+                let type = Math.floor(rand(9 + timeRatio) / 2)
+                if (type >= 4 && !waspPresent && timeRatio > 0) // TODO: improve spawning
                 {
                     waspPatience += 15
                     createBigWasp(spawnLoc, player,center, vec2(SCREEN_WIDTH, SCREEN_HEIGHT), stats);

@@ -13,6 +13,7 @@ export interface FlowerComp extends Comp {
     evolveState: number;
     flowerScale: number;
     baseRotation: number;
+    shakeTimer: number;
     direction: Vec2;
     player: GameObj<PlayerComp>;
     getFlowerState: () => number;
@@ -28,6 +29,7 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
         evolveState: 0,
         evolveTimer: 0,
         flowerScale: 0,
+        shakeTimer: 0,
         baseRotation: startRotation,
         direction: newDirection,
         require: ["pos"],
@@ -59,20 +61,21 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
             this.evolveTimer = 4;
         },
         update() {
-            this.flowerState = Math.max(0, this.flowerState - getDt(this.player))
+            let curDt = getDt(this.player)
+            this.flowerState = Math.max(0, this.flowerState - curDt)
             if (this.flowerState > 0)
             {
-                this.flowerScale = Math.min(this.flowerScale + getDt(this.player) * 2, 1)
+                this.flowerScale = Math.min(this.flowerScale + curDt * 2, 1)
             }
             else
             {
-                this.flowerScale = Math.max(this.flowerScale - getDt(this.player), 0)
+                this.flowerScale = Math.max(this.flowerScale - curDt, 0)
             }
             this.area.scale = this.flowerState > 0 ? 1.25 : 0.5;
 
             if (this.evolveState != 0)
             {
-                this.evolveTimer = Math.max(0, this.evolveTimer - getDt(this.player))
+                this.evolveTimer = Math.max(0, this.evolveTimer - curDt)
                 if (this.evolveTimer <= 0)
                 {
                     this.evolveState = 0
@@ -81,7 +84,16 @@ function flowerComp(newDirection: Vec2, startRotation: number, newPlayer: GameOb
                     this.flowerScale = 1
                     this.trigger("explode", this.worldPos(), this.direction)
                 }
-                this.angle = this.baseRotation + rand(-20, 20)
+                else
+                {
+                    this.shakeTimer -= curDt;
+                    if (this.shakeTimer <= 0)
+                    {
+                        this.shakeTimer += 0.02
+                        this.angle = this.baseRotation + rand(-20, 20)
+                    }
+
+                }
             }
         },
         draw() {0

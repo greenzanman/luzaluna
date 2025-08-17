@@ -48,5 +48,36 @@ export function mountMenuScene() {
             startBtn.outline.color = color(220, 202, 105).color
             startBtn.get("text")[0].color = color(220, 202, 105).color
         });
+
+        // Load here rather than on game start
+        loadSound("death", "explosion.mp3")
+        loadSound("hurt", "explosion2.mp3")
+        loadSound("shoot", "pew.mp3")
+        loadSound("waspDeath", "burst.mp3")
+        loadSound("bloom", "pluck.mp3")
+        loadSound("music", "music2.mp3")
+        
+        loadSprite("sparkSheet", "sparkSheet.png", {
+            sliceX: 4,
+            sliceY: 3,
+        })
+        loadSprite("swirl", "swirl.png")
+        loadSprite("pollen", "pollen.png")
+        loadSprite("beeSheet", "beeSheet.png", {
+            sliceX: 4,
+            sliceY: 2,
+            anims: {
+                beeFly: { from: 0, to: 0},
+                beeTumble: { from: 1, to: 5, loop: true}
+            }
+        })
+        loadSprite("heartEmpty", "heartEmpty.png")
+        loadSprite("heartFull", "heartFull.png")
+        loadSprite("smallWasp", "smallWasp.png", {
+            sliceX: 2,
+            anims: {
+                waspFly: { from: 0, to: 1, loop: true}
+            }
+        })
     })
 }

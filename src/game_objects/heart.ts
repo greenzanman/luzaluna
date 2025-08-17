@@ -20,7 +20,10 @@ function heartComp(): HeartComp {
             },
             draw() {
                 if(!this.heartState) {
-                    drawCircle({pos: vec2(0, 0), radius: 20, color: color(75, 75, 75).color})
+                    drawSprite({sprite: "heartEmpty"})
+                }
+                else {
+                    drawSprite({sprite: "heartFull"})
                 }
             }
         }
@@ -28,12 +31,10 @@ function heartComp(): HeartComp {
 
 export function createHeart(xPos: number, yPos: number, out: number, out_color: Color, healthBar: GameObj): void {
     let heart = healthBar.add([
-        circle(20),
         anchor("center"),
         pos(xPos, yPos),
+        scale(0.38),
         heartComp(),
-        outline(out, out_color),
-        color(220, 202, 105),
         "heart"
     ]);
 }

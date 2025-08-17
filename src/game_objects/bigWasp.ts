@@ -4,6 +4,7 @@ import {
     BUMP_SPEED,
 } from "../main";
 import { getDt } from "../scenes/game";
+import { emitWaspParticles } from "./wasp";
 
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 150;
@@ -25,6 +26,7 @@ export interface BigWaspComp extends Comp {
     moveTarget: Vec2;
     center: Vec2;
     dimensions: Vec2;
+    shakeTimer: number;
     think: (deltaTime: number) => void;
     updateState: () => number;
     updateMode: () => void;
@@ -44,7 +46,11 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
         moving: true,
         center: newCenter,
         moveTarget: newCenter,
+        shakeTimer: 0,
         dimensions: newDimensions,
+        add() {
+            this.area.scale = 0.5
+        },
         update() {
             this.think(getDt(this.target))
             this.performActions(getDt(this.target))
@@ -150,7 +156,12 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     }    
                     else
                     {
-                        this.angle = rand(-20, 20)
+                        this.shakeTimer -= getDt(this.target);
+                        if (this.shakeTimer <= 0)
+                        {
+                            this.shakeTimer += 0.02
+                            this.angle = rand(-20, 20)
+                        }
                     }
                     break;
                 case 3:
@@ -181,6 +192,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     this.worldPos(this.moveTarget);
                     this.updateMode()
                 }
+                this.flipX = (dist.x > 0)
             }
 
         },
@@ -190,6 +202,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
             if (this.health <= 0)
             {
                 this.destroy()
+                emitWaspParticles(20, this.worldPos())
                 this.trigger("death")
             }
         }
@@ -203,10 +216,10 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
         pos(position),
         area(),
         rotate(),
-        rect(50, 50),
+        scale(1),
+        sprite("smallWasp", {anim: "waspFly"}),
         anchor("center"),
         bigWaspComp(player, center, dimensions),
-        color(0.5, 0.5, 1),
         "bigWasp"
     ]);
     

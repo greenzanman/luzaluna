@@ -47,6 +47,7 @@ export interface PlayerComp extends Comp {
     emitParticles: (numParticles: number) => void;
     setPlayerState: (state: number) => void;
     getPlayerState: () => number;
+    getDilation: () => number;
 }
 
 function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
@@ -55,18 +56,25 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         playerState: 0,
         velocity: startVelocity,
         angVelocity: startAngVelocity,
-        require: ["health"],
+        require: ["health", "sprite"],
         invulTimer: 0,
         update() {
             this.velocity.y += GRAVITY * getDt(this);
             this.moveBy(this.velocity.scale(getDt(this)));
+            this.animSpeed = this.getDilation()
 
             // Clamp velocity to max speed
             if (this.velocity.len() > MAX_PLAYER_SPEED) {
                 this.velocity = this.velocity.unit().scale(MAX_PLAYER_SPEED);
             }
         
-            this.invulTimer = Math.max(0, this.invulTimer - getDt(this));
+            if (this.invulTimer > 0) {
+                this.invulTimer = Math.max(0, this.invulTimer - getDt(this));
+                if (this.invulTimer == 0)
+                {
+                    this.play("beeFly")
+                }
+            }
             this.rotateBy(this.angVelocity * getDt(this))
         },
         setVelocity(newVelocity: Vec2) {
@@ -83,6 +91,9 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             let offset = this.worldPos().sub(cause).unit();
             this.bump(offset, coef)
         },
+        getDilation() {
+            return 1 / (1 + this.invulTimer / INVUL_DURATION * 3)
+        },
         spin(coef: number) 
         {
             this.angVelocity = coef * ROTATION_FACTOR
@@ -94,7 +105,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         emitParticles(numParticles: number)
         {
             // // TODO: Find out if particle emitter is being properly destroyed
-            let loadedSpriteData = getSprite("bean").data;
+            let loadedSpriteData = getSprite("swirl").data;
             // console.log(loadedSpriteData)
             let particleEmitter = add([
                 pos(this.worldPos()),
@@ -131,6 +142,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
                 this.hurt(damage);
                 shake(6 * damage);
                 this.invulTimer = INVUL_DURATION;
+                this.play("beeTumble")
             }
         },
         draw()
@@ -150,8 +162,6 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
 }
 
 export function createPlayer(x: number, y: number) {
-    loadSprite("bean", "icon.png");
-    loadSprite("bee", "BEE.png");
     const player = add([
         playerComp(vec2(0, -50), 300),
         health(HEALTH_CAPACITY),
@@ -163,7 +173,7 @@ export function createPlayer(x: number, y: number) {
         animate(),
         anchor("center"),
         pos(x, y),
-        sprite("bee"),
+        sprite("beeSheet", {anim: "beeFly"}),
         scale(.5),
         //color(0.5, 0.5, 1),
         z(2),

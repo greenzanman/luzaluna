@@ -20,12 +20,12 @@ function pollenComp(newVelocity: Vec2, player: GameObj<PlayerComp>): PollenComp 
 
 export function createPollen(position: Vec2, vel: Vec2, player: GameObj<PlayerComp>) {
     let pollen = add([
-        rect(6, 6),
         area(),
         anchor("center"),
         pos(position.x, position.y),
+        sprite("pollen"),
+        scale(0.4),
         pollenComp(vel, player),
-        color(220, 202, 105),
         "pollen"
     ]);
 
