@@ -12,9 +12,10 @@ import {
     PADDING_HORIZ,
     BORDER_THICKNESS,
     HEART_SPACING,
-    HEALTH_CAPACITY
+    HEALTH_CAPACITY,
+    INVUL_DURATION
 } from "../main"
-import {createArrow, createPlayer} from "../game_objects/player"
+import {createArrow, createPlayer, PlayerComp} from "../game_objects/player"
 import {createFlower, FlowerComp} from "../game_objects/flower"
 import {createPollen} from "../game_objects/pollen"
 import {createHexBorder} from "../game_objects/hexBorder"
@@ -38,6 +39,15 @@ export type Stats = {
     bigWasp_kills: number,
     pollen_fired: number,
     flower_blooms: number
+}
+
+export function getDt(playerObj: GameObj<PlayerComp>): number {
+    if (playerObj != null)
+    {
+        return dt() / (1 + playerObj.invulTimer / INVUL_DURATION * 3)
+    }
+    return dt()
+
 }
 
 export function mountGameScene() {
@@ -73,6 +83,7 @@ export function mountGameScene() {
         //For each segment interpolate the flowers along the segment.
         loadSprite("bud", "BUD.png");
         loadSprite("flower", "FLOWER.png");
+        loadSound("boing", "boing.mp3")
         const flowers: GameObj<FlowerComp>[] = [];
         segments.forEach(([start, end], i) => {
             const dx = end.x - start.x;
@@ -95,7 +106,7 @@ export function mountGameScene() {
         const customTimer = createCustomTimer(SCREEN_WIDTH - PADDING_HORIZ - 550, HEART_SPACING / 2 + PADDING_VERT - 70, "Time: 0", time());
 
         // Create pollen count
-        const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50)
+        const ammoCount = createAmmoCount(vec2(SCREEN_WIDTH - PADDING_HORIZ - 150, HEART_SPACING / 2 + PADDING_VERT - 70), 150, 50, player)
 
         // Creat bump count
         //const bumpCount = createBumpCount(SCREEN_WIDTH - PADDING_HORIZ - 425, HEART_SPACING / 2 + PADDING_VERT - 70, "Bumps: 0")
@@ -184,7 +195,7 @@ export function mountGameScene() {
         const RAMP_MAX = 2
         function CreateEnemies() {
             let timeRatio = Math.max(customTimer.getTime() - RAMP_START, 0) / RAMP_RATE
-            waspPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
+            waspPatience -= getDt(player) * (1 + Math.min(timeRatio, RAMP_MAX))
             if (waspPatience < 0)
             {
                 let spawnLoc = vec2(SCREEN_WIDTH / 2, - 50)
@@ -221,7 +232,7 @@ export function mountGameScene() {
         function createFlowers() {
             let timeRatio = Math.max(customTimer.getTime() - RAMP_START + 5, 0) / RAMP_RATE
             if (timeRatio > 0)
-                flowerPatience -= dt() * (1 + Math.min(timeRatio, RAMP_MAX))
+                flowerPatience -= getDt(player) * (1 + Math.min(timeRatio, RAMP_MAX))
             if (flowerPatience < 0)
             {
                 let gottenFlower = flowers[Math.floor(rand(flowers.length))]
@@ -261,12 +272,12 @@ export function mountGameScene() {
                 mousePressed = true
             }
             // Shooting pollen
-            pollenDelay = Math.max(pollenDelay - dt(), 0);
+            pollenDelay = Math.max(pollenDelay - getDt(player), 0);
             if (isMouseDown() && mousePressed)
             {
                 if (ammoCount.GetAmmo() >= 1)
                 {
-                    shootingDuration += dt();
+                    shootingDuration += getDt(player);
                     
                     if (pollenDelay == 0) {
                         const ammo = ammoCount.GetAmmo();
@@ -281,7 +292,7 @@ export function mountGameScene() {
                         let inaccuracyOffset = vec2(rand(-inaccuracyVal, inaccuracyVal), rand(-inaccuracyVal, inaccuracyVal))
 
                         aimDirection = rawTargetDirection.add(inaccuracyOffset);
-                        createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED))
+                        createPollen(player.worldPos(), aimDirection.scale(POLLEN_SPEED), player)
 
 
 
@@ -331,7 +342,7 @@ export function mountGameScene() {
                     aimDirection = aimDirection.lerp(rawTargetDirection, lerpAimFactor).unit();
 
             // Update bump cooldown
-            bumpCooldown = Math.max(bumpCooldown - dt(), 0);
+            bumpCooldown = Math.max(bumpCooldown - getDt(player), 0);
 
             CreateEnemies()
             createFlowers()

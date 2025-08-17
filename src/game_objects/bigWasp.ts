@@ -3,6 +3,7 @@ import { PlayerComp } from "./player";
 import {
     BUMP_SPEED,
 } from "../main";
+import { getDt } from "../scenes/game";
 
 const PATIENCE_VAL = 6;
 const WASP_MOVE_SPEED = 150;
@@ -44,8 +45,8 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
         moveTarget: newCenter,
         dimensions: newDimensions,
         update() {
-            this.think(dt())
-            this.performActions(dt())
+            this.think(getDt(this.target))
+            this.performActions(getDt(this.target))
         },
         think (deltaTime: number)
         {
@@ -140,7 +141,7 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
                     speed *= 2
                     break;
                 case 2:
-                    this.angle += dt() * 120
+                    this.angle += getDt(this.target) * 120
                     break;
                 case 3:
                     speed *= 3
@@ -150,10 +151,10 @@ function bigWaspComp(target: GameObj<PosComp>, newCenter: Vec2, newDimensions: V
             switch (this.mode)
             {
                 case 2: 
-                    this.angle = Math.min(this.angle + dt() * WASP_ROTATE_SPEED, WASP_SIDE_ROT)
+                    this.angle = Math.min(this.angle + getDt(this.target) * WASP_ROTATE_SPEED, WASP_SIDE_ROT)
                     break;
                 case 3:
-                    this.angle = Math.max(this.angle - dt() * WASP_ROTATE_SPEED, -WASP_SIDE_ROT)
+                    this.angle = Math.max(this.angle - getDt(this.target) * WASP_ROTATE_SPEED, -WASP_SIDE_ROT)
                     break;
             }
             

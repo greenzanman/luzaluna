@@ -1,5 +1,7 @@
 import type { Comp, Vec2, GameObj } from "kaplay";
 import {POLLEN_CAPACITY, POLLEN_RECHARGE_RATE} from "../main"
+import { getDt } from "../scenes/game";
+import { PlayerComp } from "./player";
 
 interface PollenAmmoComp extends Comp {
     AmmoCount: number;
@@ -10,7 +12,7 @@ interface PollenAmmoComp extends Comp {
     GetAmmo:() => number;
 }
 
-function pollenAmmoComp(width: number, height: number): PollenAmmoComp {
+function pollenAmmoComp(width: number, height: number, player: GameObj<PlayerComp>): PollenAmmoComp {
     return {
             id: "pollenCountComp",
             width: width,
@@ -37,15 +39,15 @@ function pollenAmmoComp(width: number, height: number): PollenAmmoComp {
             },
             update()
             {
-                this.IncreaseAmmo(dt() * POLLEN_RECHARGE_RATE)
+                this.IncreaseAmmo(getDt(player) * POLLEN_RECHARGE_RATE)
             },
         }
 }
 
-export function createAmmoCount(position: Vec2, width: number, height: number) {
+export function createAmmoCount(position: Vec2, width: number, height: number, player: GameObj<PlayerComp>) {
     return add([
         pos(position),
-        pollenAmmoComp(width, height),
+        pollenAmmoComp(width, height, player),
         "pollenCount"
     ]);
 }
