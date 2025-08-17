@@ -3,6 +3,7 @@ import {GRAVITY, BUMP_SPEED, HEALTH_CAPACITY, ROTATION_FACTOR, INVUL_DURATION} f
 import { getDt } from "../scenes/game";
 
 const MAX_PLAYER_SPEED = 800; 
+const ARROW_OFFSET = 35;
 
 // Player Object
 export interface ArrowComp extends Comp {}
@@ -13,8 +14,8 @@ function arrowComp(player: GameObj): ArrowComp {
         update() {
             // Use aimDirection if provided, otherwise fallback
             const dir = this.aimDirection ? this.aimDirection() : mousePos().sub(player.worldPos()).unit().scale(-1);
-            this.pos = player.worldPos();
-            this.angle = dir.angle() - 90;
+            this.pos = player.worldPos().add(dir.unit().scale(ARROW_OFFSET));
+            this.angle = dir.angle() + 90;
         },
     }
 }
@@ -23,9 +24,10 @@ export function createArrow(player: GameObj): GameObj{
     const arrow = add([
         arrowComp(player),
         area(),
-        rect(5, 60),
+        scale(0.2),
+        sprite("arrow", {frame: 0}),
+        anchor("center"),
         pos(player.worldPos()),
-        color(220, 202, 105),
         "arrow"
     ]);
     

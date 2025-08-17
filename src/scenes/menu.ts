@@ -62,6 +62,10 @@ export function mountMenuScene() {
         loadSound("loss", "beeutiful misery.mp3")
         loadSound("wasp", "mosquito.mp3")
         
+        loadSprite("arrow", "flowerSheet.png", {
+            sliceX: 4,
+            sliceY: 2,
+        })
         loadSprite("sparkSheet", "sparkSheet.png", {
             sliceX: 4,
             sliceY: 3,
