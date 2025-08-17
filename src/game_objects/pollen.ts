@@ -37,5 +37,6 @@ export function createPollen(position: Vec2, vel: Vec2, player: GameObj<PlayerCo
     })
     pollen.onCollide("bigWasp", () => {
         pollen.destroy();
+            play("bloom", {volume: 0.4})
     })
 }
