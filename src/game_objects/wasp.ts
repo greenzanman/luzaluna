@@ -77,7 +77,7 @@ export function createWasp(position: Vec2, player: GameObj<PosComp | PlayerComp>
         "wasp"
     ]);
 
-    const waspSound = play("wasp", {loop: true, volume: .05})
+    const waspSound = play("wasp", {loop: true, volume: .03})
     
     wasp.onCollide("pollen", () => {
         
