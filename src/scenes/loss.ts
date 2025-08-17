@@ -26,7 +26,7 @@ Best Score:${bestScore}
 Time:${stats.time}
 Bumps:${stats.bumps}
 Wasps Killed:${stats.wasp_kills}
-Big Wasps Killed:${stats.bigWasp_kills}
+Hornets Killed:${stats.bigWasp_kills}
 Pollen Fired:${stats.pollen_fired}
 Flowers Bloomed:${stats.flower_blooms}
 
