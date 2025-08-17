@@ -263,7 +263,7 @@ export function mountGameScene() {
             // Calculate target direction
             const rawTargetDirection = mousePos().sub(player.worldPos()).scale(1).unit();
             // Lerp factor: higher = faster snap, lower = smoother
-            const lerpAimFactor = 0.15;
+            const lerpAimFactor = 0.35;
             let playerShot = false;
 
             // QOL click and hold
