@@ -78,6 +78,12 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
             this.velocity = this.velocity.sub(dirProj);
             //this.velocity = direction.unit().scale(BUMP_SPEED);
             this.velocity = this.velocity.add(direction.unit().scale(BUMP_SPEED * coef));
+
+            if (this.invulTimer == 0)
+            {
+
+                this.invulTimer = INVUL_DURATION;
+            }
         },
         bumpDirect(cause: Vec2, coef: number) {
             let offset = this.worldPos().sub(cause).unit();
@@ -126,12 +132,7 @@ function playerComp(startVelocity: Vec2, startAngVelocity: number): PlayerComp {
         },
         takedamage(damage: number)
         {
-            if (this.invulTimer == 0)
-            {
-                this.hurt(damage);
-                shake(6 * damage);
-                this.invulTimer = INVUL_DURATION;
-            }
+            
         },
         draw()
         {
