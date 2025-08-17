@@ -222,6 +222,8 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
         bigWaspComp(player, center, dimensions),
         "bigWasp"
     ]);
+
+    const waspSound = play("wasp", {loop: true, volume: .1})
     
     wasp.onCollide("pollen", () => {
         wasp.hurt()
@@ -231,5 +233,9 @@ export function createBigWasp(position: Vec2, player: GameObj<PosComp | PlayerCo
         player.takedamage(1);
         player.bumpDirect(wasp.worldPos(), 0.3)
     });
+
+    wasp.onDestroy(() => {
+        waspSound.stop()
+    })
     return wasp
 }

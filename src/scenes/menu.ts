@@ -56,6 +56,7 @@ export function mountMenuScene() {
         loadSound("waspDeath", "burst.mp3")
         loadSound("bloom", "pluck.mp3")
         loadSound("music", "music2.mp3")
+        loadSound("wasp", "mosquito.mp3")
         
         loadSprite("sparkSheet", "sparkSheet.png", {
             sliceX: 4,
